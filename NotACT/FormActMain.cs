@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
+using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -40,8 +42,8 @@ namespace Advanced_Combat_Tracker {
         public event LogFileChangedDelegate LogFileChanged;
         public event CombatActionDelegate AfterCombatAction;
         public delegate DateTime DateTimeLogParser(string logLine);
-
-        public FormActMain() {
+		public InstalledVoice Voice;
+		public FormActMain() {
             InitializeComponent();
             AppDataFolder = new DirectoryInfo(Path.Combine(LogFilePath, "Data"));
             ActGlobals.ActLocalization.Init();
@@ -49,9 +51,23 @@ namespace Advanced_Combat_Tracker {
             Resources.NotActMainFormatter.SetupEnvironment();
             LastKnownTime = DateTime.Now;
             StartAfterCombatActionThread();
-        }
+			getVoice();
+		}
+		public void getVoice()
+		{
 
-        public void WriteExceptionLog(Exception ex, string MoreInfo) {
+			using (SpeechSynthesizer synth = new SpeechSynthesizer())
+			{
+				foreach (var voice in synth.GetInstalledVoices())
+				{
+					if (voice.VoiceInfo.Culture.Name.Contains("zh"))
+					{
+						Voice = voice;
+					}
+				}
+			}
+		}
+		public void WriteExceptionLog(Exception ex, string MoreInfo) {
             var value = $"***** {DateTime.Now.ToString("s")} - {MoreInfo}\n{ex}\n{Environment.StackTrace}\n*****";
             Trace.WriteLine(value);
         }
@@ -75,10 +91,14 @@ namespace Advanced_Combat_Tracker {
 
 
         public void TTS(string message, string binary = "/usr/bin/say", string args = "") {
-            lock (_ttsLock) {
-                if (new FileInfo(binary).Exists) {
-                    try {
-                        var ttsProcess = new Process {
+            lock (_ttsLock)
+            {
+                if (new FileInfo(binary).Exists)
+                {
+                    try
+                    {
+                        var ttsProcess = new Process
+                        {
                             StartInfo = {
                                 FileName = binary,
                                 CreateNoWindow = true,
@@ -89,13 +109,21 @@ namespace Advanced_Combat_Tracker {
                         ttsProcess.Start();
                         Thread.Sleep(500 * message.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length);
                     }
-                    catch (Exception ex) {
+                    catch (Exception ex)
+                    {
                         WriteExceptionLog(ex, $"TTS failed to play back {message}");
                     }
-                } else {
-                    Trace.WriteLine($"TTS binary {binary} not found");
                 }
+                else
+                {
+					SpeechSynthesizer synth = new SpeechSynthesizer();
+					synth.Rate = 0;
+					synth.Volume = 100;
+					synth.SelectVoice(Voice.VoiceInfo.Name);
+					synth.SpeakAsync(message);
+				}
             }
+           
         }
 
         public Regex ZoneChangeRegex { get; set; }

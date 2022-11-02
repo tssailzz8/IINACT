@@ -244,22 +244,8 @@ namespace RainbowMage.OverlayPlugin {
         }
 
         public string GetLocaleString() {
-            switch (GetLanguage()) {
-                case Language.English:
-                    return "en";
-                case Language.French:
-                    return "fr";
-                case Language.German:
-                    return "de";
-                case Language.Japanese:
-                    return "ja";
-                case Language.Chinese:
+
                     return "cn";
-                case Language.Korean:
-                    return "ko";
-                default:
-                    return null;
-            }
         }
 
         public GameRegion GetMachinaRegion() =>
@@ -272,6 +258,7 @@ namespace RainbowMage.OverlayPlugin {
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal bool WriteLogLineImpl(uint ID, DateTime timestamp, string line) {
+            return false;
             if (_logOutput == null) {
                 var plugin = GetPluginData();
                 _logOutput = (ILogOutput)plugin._iocContainer.GetService(typeof(ILogOutput));
