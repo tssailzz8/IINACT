@@ -244,22 +244,8 @@ namespace RainbowMage.OverlayPlugin {
         }
 
         public string GetLocaleString() {
-            switch (GetLanguage()) {
-                case Language.English:
-                    return "en";
-                case Language.French:
-                    return "fr";
-                case Language.German:
-                    return "de";
-                case Language.Japanese:
-                    return "ja";
-                case Language.Chinese:
+
                     return "cn";
-                case Language.Korean:
-                    return "ko";
-                default:
-                    return null;
-            }
         }
 
         public GameRegion GetMachinaRegion() =>

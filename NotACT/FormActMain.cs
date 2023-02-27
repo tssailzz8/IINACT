@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
+using System.Speech.Synthesis;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -16,6 +17,7 @@ namespace Advanced_Combat_Tracker {
         private Thread _logReaderThread;
         private Thread _logWriterThread;
         private readonly object _ttsLock = new();
+        private bool CNCanGet = false;
 
         internal volatile bool refreshTree;
 
@@ -75,7 +77,8 @@ namespace Advanced_Combat_Tracker {
 
 
         public void TTS(string message, string binary = "/usr/bin/say", string args = "") {
-            lock (_ttsLock) {
+
+			lock (_ttsLock) {
                 if (new FileInfo(binary).Exists) {
                     try {
                         var ttsProcess = new Process {
@@ -93,12 +96,35 @@ namespace Advanced_Combat_Tracker {
                         WriteExceptionLog(ex, $"TTS failed to play back {message}");
                     }
                 } else {
-                    Trace.WriteLine($"TTS binary {binary} not found");
-                }
+					getVoice();
+					SpeechSynthesizer synth = new SpeechSynthesizer();
+					synth.Rate = 0;
+					synth.Volume = 100;
+					synth.SelectVoice(Voice.VoiceInfo.Name);
+					synth.SpeakAsync(message);
+
+				}
             }
         }
+		public InstalledVoice Voice;
+		public void getVoice()
+		{
+            if (CNCanGet) return;
 
-        public Regex ZoneChangeRegex { get; set; }
+            using (SpeechSynthesizer synth = new SpeechSynthesizer())
+			{
+                var voices = synth.GetInstalledVoices();
+				foreach (var voice in synth.GetInstalledVoices())
+				{
+					if (voice.VoiceInfo.Culture.Name.Contains("zh"))
+					{
+                        CNCanGet = true;
+						Voice = voice;
+					}
+				}
+			}
+		}
+		public Regex ZoneChangeRegex { get; set; }
 
         public bool LogPathHasCharName { get; set; }
 

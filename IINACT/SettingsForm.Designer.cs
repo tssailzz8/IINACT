@@ -1,511 +1,513 @@
 ﻿using System.ComponentModel;
 using DarkUI.Controls;
 
-namespace IINACT {
-    partial class SettingsForm {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
-        private IContainer components = null;
+namespace IINACT
+{
+	partial class SettingsForm
+	{
+		/// <summary>
+		///  Required designer variable.
+		/// </summary>
+		private IContainer components = null;
 
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing) {
-            if (disposing && (components != null)) {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		/// <summary>
+		///  Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
-        #region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
-            this.label1 = new System.Windows.Forms.Label();
-            this.darkSectionPanel1 = new DarkUI.Controls.DarkSectionPanel();
-            this.darkLabel14 = new DarkUI.Controls.DarkLabel();
-            this.checkBoxDebug = new DarkUI.Controls.DarkCheckBox();
-            this.checkBoxDotTick = new DarkUI.Controls.DarkCheckBox();
-            this.checkBoxDotCrit = new DarkUI.Controls.DarkCheckBox();
-            this.checkBoxPets = new DarkUI.Controls.DarkCheckBox();
-            this.checkBoxRpcap = new DarkUI.Controls.DarkCheckBox();
-            this.checkBoxShield = new DarkUI.Controls.DarkCheckBox();
-            this.logFileLabel = new DarkUI.Controls.DarkLabel();
-            this.logFileButton = new DarkUI.Controls.DarkButton();
-            this.darkLabel2 = new DarkUI.Controls.DarkLabel();
-            this.comboBoxFilter = new DarkUI.Controls.DarkComboBox();
-            this.comboBoxLang = new DarkUI.Controls.DarkComboBox();
-            this.darkLabel1 = new DarkUI.Controls.DarkLabel();
-            this.rpcapSectionPanel = new DarkUI.Controls.DarkSectionPanel();
-            this.darkLabel12 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel11 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel10 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel9 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel8 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel7 = new DarkUI.Controls.DarkLabel();
-            this.textBoxPassword = new DarkUI.Controls.DarkTextBox();
-            this.textBoxUsername = new DarkUI.Controls.DarkTextBox();
-            this.darkLabel6 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel5 = new DarkUI.Controls.DarkLabel();
-            this.textBoxPort = new DarkUI.Controls.DarkTextBox();
-            this.darkLabel4 = new DarkUI.Controls.DarkLabel();
-            this.textBoxHost = new DarkUI.Controls.DarkTextBox();
-            this.darkLabel3 = new DarkUI.Controls.DarkLabel();
-            this.darkSectionPanel4 = new DarkUI.Controls.DarkSectionPanel();
-            this.debugBox = new DarkUI.Controls.DarkTextBox();
-            this.opPanel = new System.Windows.Forms.Panel();
-            this.opLabel = new DarkUI.Controls.DarkLabel();
-            this.logFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.darkSectionPanel1.SuspendLayout();
-            this.rpcapSectionPanel.SuspendLayout();
-            this.darkSectionPanel4.SuspendLayout();
-            this.opPanel.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.label1.Location = new System.Drawing.Point(0, 676);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 15);
-            this.label1.TabIndex = 1;
-            // 
-            // darkSectionPanel1
-            // 
-            this.darkSectionPanel1.Controls.Add(this.darkLabel14);
-            this.darkSectionPanel1.Controls.Add(this.checkBoxDebug);
-            this.darkSectionPanel1.Controls.Add(this.checkBoxDotTick);
-            this.darkSectionPanel1.Controls.Add(this.checkBoxDotCrit);
-            this.darkSectionPanel1.Controls.Add(this.checkBoxPets);
-            this.darkSectionPanel1.Controls.Add(this.checkBoxRpcap);
-            this.darkSectionPanel1.Controls.Add(this.checkBoxShield);
-            this.darkSectionPanel1.Controls.Add(this.logFileLabel);
-            this.darkSectionPanel1.Controls.Add(this.logFileButton);
-            this.darkSectionPanel1.Controls.Add(this.darkLabel2);
-            this.darkSectionPanel1.Controls.Add(this.comboBoxFilter);
-            this.darkSectionPanel1.Controls.Add(this.comboBoxLang);
-            this.darkSectionPanel1.Controls.Add(this.darkLabel1);
-            this.darkSectionPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.darkSectionPanel1.Location = new System.Drawing.Point(0, 0);
-            this.darkSectionPanel1.Name = "darkSectionPanel1";
-            this.darkSectionPanel1.SectionHeader = "Parse Settings";
-            this.darkSectionPanel1.Size = new System.Drawing.Size(803, 220);
-            this.darkSectionPanel1.TabIndex = 2;
-            // 
-            // darkLabel14
-            // 
-            this.darkLabel14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkLabel14.AutoSize = true;
-            this.darkLabel14.ForeColor = System.Drawing.Color.Gray;
-            this.darkLabel14.Location = new System.Drawing.Point(471, 38);
-            this.darkLabel14.Name = "darkLabel14";
-            this.darkLabel14.Size = new System.Drawing.Size(320, 15);
-            this.darkLabel14.TabIndex = 9;
-            this.darkLabel14.Text = "Changing Parse Settings may requires an application restart";
-            // 
-            // checkBoxDebug
-            // 
-            this.checkBoxDebug.AutoSize = true;
-            this.checkBoxDebug.Location = new System.Drawing.Point(12, 182);
-            this.checkBoxDebug.Name = "checkBoxDebug";
-            this.checkBoxDebug.Size = new System.Drawing.Size(250, 19);
-            this.checkBoxDebug.TabIndex = 8;
-            this.checkBoxDebug.Text = "(DEBUG) Forward Debug Fields to Overlays";
-            this.checkBoxDebug.CheckedChanged += new System.EventHandler(this.checkBoxDebug_CheckedChanged);
-            // 
-            // checkBoxDotTick
-            // 
-            this.checkBoxDotTick.AutoSize = true;
-            this.checkBoxDotTick.Location = new System.Drawing.Point(416, 157);
-            this.checkBoxDotTick.Name = "checkBoxDotTick";
-            this.checkBoxDotTick.Size = new System.Drawing.Size(213, 19);
-            this.checkBoxDotTick.TabIndex = 7;
-            this.checkBoxDotTick.Text = "(DEBUG) Also Show \'Real\' DoT Ticks";
-            this.checkBoxDotTick.CheckedChanged += new System.EventHandler(this.checkBoxDotTick_CheckedChanged);
-            // 
-            // checkBoxDotCrit
-            // 
-            this.checkBoxDotCrit.AutoSize = true;
-            this.checkBoxDotCrit.Location = new System.Drawing.Point(12, 157);
-            this.checkBoxDotCrit.Name = "checkBoxDotCrit";
-            this.checkBoxDotCrit.Size = new System.Drawing.Size(226, 19);
-            this.checkBoxDotCrit.TabIndex = 6;
-            this.checkBoxDotCrit.Text = "(DEBUG) Simulate Individual DoT Crits";
-            this.checkBoxDotCrit.CheckedChanged += new System.EventHandler(this.checkBoxDotCrit_CheckedChanged);
-            // 
-            // checkBoxPets
-            // 
-            this.checkBoxPets.AutoSize = true;
-            this.checkBoxPets.Location = new System.Drawing.Point(416, 132);
-            this.checkBoxPets.Name = "checkBoxPets";
-            this.checkBoxPets.Size = new System.Drawing.Size(205, 19);
-            this.checkBoxPets.TabIndex = 5;
-            this.checkBoxPets.Text = "Disable Combine Pets with Owner";
-            this.checkBoxPets.CheckedChanged += new System.EventHandler(this.checkBoxPets_CheckedChanged);
-            // 
-            // checkBoxRpcap
-            // 
-            this.checkBoxRpcap.AutoSize = true;
-            this.checkBoxRpcap.Location = new System.Drawing.Point(416, 182);
-            this.checkBoxRpcap.Name = "checkBoxRpcap";
-            this.checkBoxRpcap.Size = new System.Drawing.Size(150, 19);
-            this.checkBoxRpcap.TabIndex = 11;
-            this.checkBoxRpcap.Text = "(EXPERT) Enable RPCAP";
-            this.checkBoxRpcap.CheckedChanged += new System.EventHandler(this.RpcapCheckBox_CheckedChanged);
-            // 
-            // checkBoxShield
-            // 
-            this.checkBoxShield.AutoSize = true;
-            this.checkBoxShield.Location = new System.Drawing.Point(12, 132);
-            this.checkBoxShield.Name = "checkBoxShield";
-            this.checkBoxShield.Size = new System.Drawing.Size(199, 19);
-            this.checkBoxShield.TabIndex = 4;
-            this.checkBoxShield.Text = "Disable Damage Shield Estimates";
-            this.checkBoxShield.CheckedChanged += new System.EventHandler(this.checkBoxShield_CheckedChanged);
-            // 
-            // logFileLabel
-            // 
-            this.logFileLabel.AutoSize = true;
-            this.logFileLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.logFileLabel.Location = new System.Drawing.Point(12, 98);
-            this.logFileLabel.Name = "logFileLabel";
-            this.logFileLabel.Size = new System.Drawing.Size(95, 15);
-            this.logFileLabel.TabIndex = 0;
-            this.logFileLabel.Text = "Logfile Location:";
-            // 
-            // logFileButton
-            // 
-            this.logFileButton.Location = new System.Drawing.Point(172, 95);
-            this.logFileButton.Name = "logFileButton";
-            this.logFileButton.Padding = new System.Windows.Forms.Padding(5);
-            this.logFileButton.Size = new System.Drawing.Size(454, 24);
-            this.logFileButton.TabIndex = 1;
-            this.logFileButton.Text = "Log Directory";
-            // 
-            // darkLabel2
-            // 
-            this.darkLabel2.AutoSize = true;
-            this.darkLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel2.Location = new System.Drawing.Point(12, 68);
-            this.darkLabel2.Name = "darkLabel2";
-            this.darkLabel2.Size = new System.Drawing.Size(67, 15);
-            this.darkLabel2.TabIndex = 3;
-            this.darkLabel2.Text = "Parse Filter:";
-            // 
-            // comboBoxFilter
-            // 
-            this.comboBoxFilter.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.comboBoxFilter.FormattingEnabled = true;
-            this.comboBoxFilter.Location = new System.Drawing.Point(172, 65);
-            this.comboBoxFilter.Name = "comboBoxFilter";
-            this.comboBoxFilter.Size = new System.Drawing.Size(227, 24);
-            this.comboBoxFilter.TabIndex = 2;
-            // 
-            // comboBoxLang
-            // 
-            this.comboBoxLang.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            this.comboBoxLang.FormattingEnabled = true;
-            this.comboBoxLang.Location = new System.Drawing.Point(172, 35);
-            this.comboBoxLang.Name = "comboBoxLang";
-            this.comboBoxLang.Size = new System.Drawing.Size(227, 24);
-            this.comboBoxLang.TabIndex = 1;
-            // 
-            // darkLabel1
-            // 
-            this.darkLabel1.AutoSize = true;
-            this.darkLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel1.Location = new System.Drawing.Point(12, 38);
-            this.darkLabel1.Name = "darkLabel1";
-            this.darkLabel1.Size = new System.Drawing.Size(96, 15);
-            this.darkLabel1.TabIndex = 0;
-            this.darkLabel1.Text = "Game Language:";
-            // 
-            // rpcapSectionPanel
-            // 
-            this.rpcapSectionPanel.Controls.Add(this.darkLabel12);
-            this.rpcapSectionPanel.Controls.Add(this.darkLabel11);
-            this.rpcapSectionPanel.Controls.Add(this.darkLabel10);
-            this.rpcapSectionPanel.Controls.Add(this.darkLabel9);
-            this.rpcapSectionPanel.Controls.Add(this.darkLabel8);
-            this.rpcapSectionPanel.Controls.Add(this.darkLabel7);
-            this.rpcapSectionPanel.Controls.Add(this.textBoxPassword);
-            this.rpcapSectionPanel.Controls.Add(this.textBoxUsername);
-            this.rpcapSectionPanel.Controls.Add(this.darkLabel6);
-            this.rpcapSectionPanel.Controls.Add(this.darkLabel5);
-            this.rpcapSectionPanel.Controls.Add(this.textBoxPort);
-            this.rpcapSectionPanel.Controls.Add(this.darkLabel4);
-            this.rpcapSectionPanel.Controls.Add(this.textBoxHost);
-            this.rpcapSectionPanel.Controls.Add(this.darkLabel3);
-            this.rpcapSectionPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.rpcapSectionPanel.Location = new System.Drawing.Point(0, 220);
-            this.rpcapSectionPanel.Name = "rpcapSectionPanel";
-            this.rpcapSectionPanel.SectionHeader = "RPCAP";
-            this.rpcapSectionPanel.Size = new System.Drawing.Size(803, 200);
-            this.rpcapSectionPanel.TabIndex = 3;
-            // 
-            // darkLabel12
-            // 
-            this.darkLabel12.AutoSize = true;
-            this.darkLabel12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel12.Location = new System.Drawing.Point(12, 187);
-            this.darkLabel12.Name = "darkLabel12";
-            this.darkLabel12.Size = new System.Drawing.Size(55, 15);
-            this.darkLabel12.TabIndex = 15;
-            this.darkLabel12.Text = "Warning:";
-            // 
-            // darkLabel11
-            // 
-            this.darkLabel11.AutoSize = true;
-            this.darkLabel11.ForeColor = System.Drawing.Color.LightCoral;
-            this.darkLabel11.Location = new System.Drawing.Point(79, 187);
-            this.darkLabel11.Name = "darkLabel11";
-            this.darkLabel11.Size = new System.Drawing.Size(515, 30);
-            this.darkLabel11.TabIndex = 14;
-            this.darkLabel11.Text = "The username and password are sent over the network to the capture server ***IN C" +
-    "LEAR TEXT***\r\nBecause of this credentials are also stored unenecrypted for now.";
-            // 
-            // darkLabel10
-            // 
-            this.darkLabel10.AutoSize = true;
-            this.darkLabel10.ForeColor = System.Drawing.Color.Gray;
-            this.darkLabel10.Location = new System.Drawing.Point(315, 155);
-            this.darkLabel10.Name = "darkLabel10";
-            this.darkLabel10.Size = new System.Drawing.Size(457, 15);
-            this.darkLabel10.TabIndex = 13;
-            this.darkLabel10.Text = "Specifies the password that has to be used on the remote machine for authenticati" +
-    "on.";
-            // 
-            // darkLabel9
-            // 
-            this.darkLabel9.AutoSize = true;
-            this.darkLabel9.ForeColor = System.Drawing.Color.Gray;
-            this.darkLabel9.Location = new System.Drawing.Point(315, 126);
-            this.darkLabel9.Name = "darkLabel9";
-            this.darkLabel9.Size = new System.Drawing.Size(459, 15);
-            this.darkLabel9.TabIndex = 12;
-            this.darkLabel9.Text = "Specifies the username that has to be used on the remote machine for authenticati" +
-    "on.";
-            // 
-            // darkLabel8
-            // 
-            this.darkLabel8.AutoSize = true;
-            this.darkLabel8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel8.Location = new System.Drawing.Point(12, 155);
-            this.darkLabel8.Name = "darkLabel8";
-            this.darkLabel8.Size = new System.Drawing.Size(60, 15);
-            this.darkLabel8.TabIndex = 10;
-            this.darkLabel8.Text = "Password:";
-            // 
-            // darkLabel7
-            // 
-            this.darkLabel7.AutoSize = true;
-            this.darkLabel7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel7.Location = new System.Drawing.Point(12, 126);
-            this.darkLabel7.Name = "darkLabel7";
-            this.darkLabel7.Size = new System.Drawing.Size(63, 15);
-            this.darkLabel7.TabIndex = 9;
-            this.darkLabel7.Text = "Username:";
-            // 
-            // textBoxPassword
-            // 
-            this.textBoxPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.textBoxPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.textBoxPassword.Location = new System.Drawing.Point(82, 153);
-            this.textBoxPassword.Name = "textBoxPassword";
-            this.textBoxPassword.Size = new System.Drawing.Size(227, 23);
-            this.textBoxPassword.TabIndex = 8;
-            this.textBoxPassword.UseSystemPasswordChar = true;
-            this.textBoxPassword.TextChanged += new System.EventHandler(this.TextBoxPassword_TextChanged);
-            // 
-            // textBoxUsername
-            // 
-            this.textBoxUsername.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.textBoxUsername.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxUsername.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.textBoxUsername.Location = new System.Drawing.Point(82, 124);
-            this.textBoxUsername.Name = "textBoxUsername";
-            this.textBoxUsername.Size = new System.Drawing.Size(227, 23);
-            this.textBoxUsername.TabIndex = 7;
-            this.textBoxUsername.TextChanged += new System.EventHandler(this.TextBoxUsername_TextChanged);
-            // 
-            // darkLabel6
-            // 
-            this.darkLabel6.AutoSize = true;
-            this.darkLabel6.ForeColor = System.Drawing.Color.Gray;
-            this.darkLabel6.Location = new System.Drawing.Point(315, 97);
-            this.darkLabel6.Name = "darkLabel6";
-            this.darkLabel6.Size = new System.Drawing.Size(422, 15);
-            this.darkLabel6.TabIndex = 6;
-            this.darkLabel6.Text = "Specifies the network port (e.g. \"2002\") we want to use for the RPCAP protocol.";
-            // 
-            // darkLabel5
-            // 
-            this.darkLabel5.AutoSize = true;
-            this.darkLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel5.Location = new System.Drawing.Point(12, 97);
-            this.darkLabel5.Name = "darkLabel5";
-            this.darkLabel5.Size = new System.Drawing.Size(32, 15);
-            this.darkLabel5.TabIndex = 5;
-            this.darkLabel5.Text = "Port:";
-            // 
-            // textBoxPort
-            // 
-            this.textBoxPort.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.textBoxPort.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.textBoxPort.Location = new System.Drawing.Point(82, 95);
-            this.textBoxPort.Name = "textBoxPort";
-            this.textBoxPort.Size = new System.Drawing.Size(227, 23);
-            this.textBoxPort.TabIndex = 4;
-            this.textBoxPort.TextChanged += new System.EventHandler(this.TextBoxPort_TextChanged);
-            // 
-            // darkLabel4
-            // 
-            this.darkLabel4.AutoSize = true;
-            this.darkLabel4.ForeColor = System.Drawing.Color.Gray;
-            this.darkLabel4.Location = new System.Drawing.Point(315, 68);
-            this.darkLabel4.Name = "darkLabel4";
-            this.darkLabel4.Size = new System.Drawing.Size(334, 15);
-            this.darkLabel4.TabIndex = 3;
-            this.darkLabel4.Text = "Specifies the host (e.g. \"foo.bar.com\") we want to connect to. \r\n";
-            // 
-            // textBoxHost
-            // 
-            this.textBoxHost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.textBoxHost.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxHost.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.textBoxHost.Location = new System.Drawing.Point(82, 66);
-            this.textBoxHost.Name = "textBoxHost";
-            this.textBoxHost.Size = new System.Drawing.Size(227, 23);
-            this.textBoxHost.TabIndex = 2;
-            this.textBoxHost.TextChanged += new System.EventHandler(this.TextBoxHost_TextChanged);
-            // 
-            // darkLabel3
-            // 
-            this.darkLabel3.AutoSize = true;
-            this.darkLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel3.Location = new System.Drawing.Point(12, 68);
-            this.darkLabel3.Name = "darkLabel3";
-            this.darkLabel3.Size = new System.Drawing.Size(35, 15);
-            this.darkLabel3.TabIndex = 1;
-            this.darkLabel3.Text = "Host:";
-            // 
-            // darkSectionPanel4
-            // 
-            this.darkSectionPanel4.Controls.Add(this.debugBox);
-            this.darkSectionPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkSectionPanel4.Location = new System.Drawing.Point(0, 528);
-            this.darkSectionPanel4.Name = "darkSectionPanel4";
-            this.darkSectionPanel4.SectionHeader = "Debug Log";
-            this.darkSectionPanel4.Size = new System.Drawing.Size(803, 148);
-            this.darkSectionPanel4.TabIndex = 5;
-            // 
-            // debugBox
-            // 
-            this.debugBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.debugBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.debugBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.debugBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.debugBox.Location = new System.Drawing.Point(1, 25);
-            this.debugBox.Multiline = true;
-            this.debugBox.Name = "debugBox";
-            this.debugBox.ReadOnly = true;
-            this.debugBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.debugBox.Size = new System.Drawing.Size(801, 122);
-            this.debugBox.TabIndex = 0;
-            // 
-            // opPanel
-            // 
-            this.opPanel.Controls.Add(this.opLabel);
-            this.opPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.opPanel.Location = new System.Drawing.Point(0, 420);
-            this.opPanel.Name = "opPanel";
-            this.opPanel.Size = new System.Drawing.Size(803, 108);
-            this.opPanel.TabIndex = 6;
-            // 
-            // opLabel
-            // 
-            this.opLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.opLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.opLabel.Location = new System.Drawing.Point(569, 34);
-            this.opLabel.Name = "opLabel";
-            this.opLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.opLabel.Size = new System.Drawing.Size(222, 21);
-            this.opLabel.TabIndex = 0;
-            this.opLabel.Text = "...Searching for game";
-            this.opLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // SettingsForm
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(803, 691);
-            this.Controls.Add(this.darkSectionPanel4);
-            this.Controls.Add(this.opPanel);
-            this.Controls.Add(this.rpcapSectionPanel);
-            this.Controls.Add(this.darkSectionPanel1);
-            this.Controls.Add(this.label1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(819, 220);
-            this.Name = "SettingsForm";
-            this.Text = "IINACT";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-            this.darkSectionPanel1.ResumeLayout(false);
-            this.darkSectionPanel1.PerformLayout();
-            this.rpcapSectionPanel.ResumeLayout(false);
-            this.rpcapSectionPanel.PerformLayout();
-            this.darkSectionPanel4.ResumeLayout(false);
-            this.darkSectionPanel4.PerformLayout();
-            this.opPanel.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+		/// <summary>
+		///  Required method for Designer support - do not modify
+		///  the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			ComponentResourceManager resources = new ComponentResourceManager(typeof(SettingsForm));
+			label1 = new Label();
+			darkSectionPanel1 = new DarkSectionPanel();
+			darkLabel14 = new DarkLabel();
+			checkBoxDebug = new DarkCheckBox();
+			checkBoxDotTick = new DarkCheckBox();
+			checkBoxDotCrit = new DarkCheckBox();
+			checkBoxPets = new DarkCheckBox();
+			checkBoxRpcap = new DarkCheckBox();
+			checkBoxShield = new DarkCheckBox();
+			logFileLabel = new DarkLabel();
+			logFileButton = new DarkButton();
+			darkLabel2 = new DarkLabel();
+			comboBoxFilter = new DarkComboBox();
+			comboBoxLang = new DarkComboBox();
+			darkLabel1 = new DarkLabel();
+			rpcapSectionPanel = new DarkSectionPanel();
+			darkLabel12 = new DarkLabel();
+			darkLabel11 = new DarkLabel();
+			darkLabel10 = new DarkLabel();
+			darkLabel9 = new DarkLabel();
+			darkLabel8 = new DarkLabel();
+			darkLabel7 = new DarkLabel();
+			textBoxPassword = new DarkTextBox();
+			textBoxUsername = new DarkTextBox();
+			darkLabel6 = new DarkLabel();
+			darkLabel5 = new DarkLabel();
+			textBoxPort = new DarkTextBox();
+			darkLabel4 = new DarkLabel();
+			textBoxHost = new DarkTextBox();
+			darkLabel3 = new DarkLabel();
+			darkSectionPanel4 = new DarkSectionPanel();
+			debugBox = new DarkTextBox();
+			opPanel = new Panel();
+			opLabel = new DarkLabel();
+			logFolderBrowserDialog = new FolderBrowserDialog();
+			darkSectionPanel1.SuspendLayout();
+			rpcapSectionPanel.SuspendLayout();
+			darkSectionPanel4.SuspendLayout();
+			opPanel.SuspendLayout();
+			SuspendLayout();
+			// 
+			// label1
+			// 
+			label1.AutoSize = true;
+			label1.Dock = DockStyle.Bottom;
+			label1.Location = new Point(0, 766);
+			label1.Name = "label1";
+			label1.Size = new Size(0, 17);
+			label1.TabIndex = 1;
+			// 
+			// darkSectionPanel1
+			// 
+			darkSectionPanel1.Controls.Add(darkLabel14);
+			darkSectionPanel1.Controls.Add(checkBoxDebug);
+			darkSectionPanel1.Controls.Add(checkBoxDotTick);
+			darkSectionPanel1.Controls.Add(checkBoxDotCrit);
+			darkSectionPanel1.Controls.Add(checkBoxPets);
+			darkSectionPanel1.Controls.Add(checkBoxRpcap);
+			darkSectionPanel1.Controls.Add(checkBoxShield);
+			darkSectionPanel1.Controls.Add(logFileLabel);
+			darkSectionPanel1.Controls.Add(logFileButton);
+			darkSectionPanel1.Controls.Add(darkLabel2);
+			darkSectionPanel1.Controls.Add(comboBoxFilter);
+			darkSectionPanel1.Controls.Add(comboBoxLang);
+			darkSectionPanel1.Controls.Add(darkLabel1);
+			darkSectionPanel1.Dock = DockStyle.Top;
+			darkSectionPanel1.Location = new Point(0, 0);
+			darkSectionPanel1.Name = "darkSectionPanel1";
+			darkSectionPanel1.SectionHeader = "Parse Settings";
+			darkSectionPanel1.Size = new Size(803, 249);
+			darkSectionPanel1.TabIndex = 2;
+			// 
+			// darkLabel14
+			// 
+			darkLabel14.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			darkLabel14.AutoSize = true;
+			darkLabel14.ForeColor = Color.Gray;
+			darkLabel14.Location = new Point(471, 43);
+			darkLabel14.Name = "darkLabel14";
+			darkLabel14.Size = new Size(357, 17);
+			darkLabel14.TabIndex = 9;
+			darkLabel14.Text = "Changing Parse Settings may requires an application restart";
+			// 
+			// checkBoxDebug
+			// 
+			checkBoxDebug.AutoSize = true;
+			checkBoxDebug.Location = new Point(12, 206);
+			checkBoxDebug.Name = "checkBoxDebug";
+			checkBoxDebug.Size = new Size(279, 21);
+			checkBoxDebug.TabIndex = 8;
+			checkBoxDebug.Text = "(DEBUG) Forward Debug Fields to Overlays";
+			checkBoxDebug.CheckedChanged += checkBoxDebug_CheckedChanged;
+			// 
+			// checkBoxDotTick
+			// 
+			checkBoxDotTick.AutoSize = true;
+			checkBoxDotTick.Location = new Point(416, 178);
+			checkBoxDotTick.Name = "checkBoxDotTick";
+			checkBoxDotTick.Size = new Size(237, 21);
+			checkBoxDotTick.TabIndex = 7;
+			checkBoxDotTick.Text = "(DEBUG) Also Show 'Real' DoT Ticks";
+			checkBoxDotTick.CheckedChanged += checkBoxDotTick_CheckedChanged;
+			// 
+			// checkBoxDotCrit
+			// 
+			checkBoxDotCrit.AutoSize = true;
+			checkBoxDotCrit.Location = new Point(12, 178);
+			checkBoxDotCrit.Name = "checkBoxDotCrit";
+			checkBoxDotCrit.Size = new Size(248, 21);
+			checkBoxDotCrit.TabIndex = 6;
+			checkBoxDotCrit.Text = "(DEBUG) Simulate Individual DoT Crits";
+			checkBoxDotCrit.CheckedChanged += checkBoxDotCrit_CheckedChanged;
+			// 
+			// checkBoxPets
+			// 
+			checkBoxPets.AutoSize = true;
+			checkBoxPets.Location = new Point(416, 150);
+			checkBoxPets.Name = "checkBoxPets";
+			checkBoxPets.Size = new Size(223, 21);
+			checkBoxPets.TabIndex = 5;
+			checkBoxPets.Text = "Disable Combine Pets with Owner";
+			checkBoxPets.CheckedChanged += checkBoxPets_CheckedChanged;
+			// 
+			// checkBoxRpcap
+			// 
+			checkBoxRpcap.AutoSize = true;
+			checkBoxRpcap.Location = new Point(416, 206);
+			checkBoxRpcap.Name = "checkBoxRpcap";
+			checkBoxRpcap.Size = new Size(164, 21);
+			checkBoxRpcap.TabIndex = 11;
+			checkBoxRpcap.Text = "(EXPERT) Enable RPCAP";
+			checkBoxRpcap.CheckedChanged += RpcapCheckBox_CheckedChanged;
+			// 
+			// checkBoxShield
+			// 
+			checkBoxShield.AutoSize = true;
+			checkBoxShield.Location = new Point(12, 150);
+			checkBoxShield.Name = "checkBoxShield";
+			checkBoxShield.Size = new Size(221, 21);
+			checkBoxShield.TabIndex = 4;
+			checkBoxShield.Text = "Disable Damage Shield Estimates";
+			checkBoxShield.CheckedChanged += checkBoxShield_CheckedChanged;
+			// 
+			// logFileLabel
+			// 
+			logFileLabel.AutoSize = true;
+			logFileLabel.ForeColor = Color.FromArgb(220, 220, 220);
+			logFileLabel.Location = new Point(12, 111);
+			logFileLabel.Name = "logFileLabel";
+			logFileLabel.Size = new Size(103, 17);
+			logFileLabel.TabIndex = 0;
+			logFileLabel.Text = "Logfile Location:";
+			// 
+			// logFileButton
+			// 
+			logFileButton.Location = new Point(172, 108);
+			logFileButton.Name = "logFileButton";
+			logFileButton.Padding = new Padding(5, 6, 5, 6);
+			logFileButton.Size = new Size(454, 27);
+			logFileButton.TabIndex = 1;
+			logFileButton.Text = "Log Directory";
+			// 
+			// darkLabel2
+			// 
+			darkLabel2.AutoSize = true;
+			darkLabel2.ForeColor = Color.FromArgb(220, 220, 220);
+			darkLabel2.Location = new Point(12, 77);
+			darkLabel2.Name = "darkLabel2";
+			darkLabel2.Size = new Size(75, 17);
+			darkLabel2.TabIndex = 3;
+			darkLabel2.Text = "Parse Filter:";
+			// 
+			// comboBoxFilter
+			// 
+			comboBoxFilter.DrawMode = DrawMode.OwnerDrawVariable;
+			comboBoxFilter.FormattingEnabled = true;
+			comboBoxFilter.Location = new Point(172, 74);
+			comboBoxFilter.Name = "comboBoxFilter";
+			comboBoxFilter.Size = new Size(227, 24);
+			comboBoxFilter.TabIndex = 2;
+			// 
+			// comboBoxLang
+			// 
+			comboBoxLang.DrawMode = DrawMode.OwnerDrawVariable;
+			comboBoxLang.FormattingEnabled = true;
+			comboBoxLang.Location = new Point(172, 40);
+			comboBoxLang.Name = "comboBoxLang";
+			comboBoxLang.Size = new Size(227, 24);
+			comboBoxLang.TabIndex = 1;
+			// 
+			// darkLabel1
+			// 
+			darkLabel1.AutoSize = true;
+			darkLabel1.ForeColor = Color.FromArgb(220, 220, 220);
+			darkLabel1.Location = new Point(12, 43);
+			darkLabel1.Name = "darkLabel1";
+			darkLabel1.Size = new Size(106, 17);
+			darkLabel1.TabIndex = 0;
+			darkLabel1.Text = "Game Language:";
+			// 
+			// rpcapSectionPanel
+			// 
+			rpcapSectionPanel.Controls.Add(darkLabel12);
+			rpcapSectionPanel.Controls.Add(darkLabel11);
+			rpcapSectionPanel.Controls.Add(darkLabel10);
+			rpcapSectionPanel.Controls.Add(darkLabel9);
+			rpcapSectionPanel.Controls.Add(darkLabel8);
+			rpcapSectionPanel.Controls.Add(darkLabel7);
+			rpcapSectionPanel.Controls.Add(textBoxPassword);
+			rpcapSectionPanel.Controls.Add(textBoxUsername);
+			rpcapSectionPanel.Controls.Add(darkLabel6);
+			rpcapSectionPanel.Controls.Add(darkLabel5);
+			rpcapSectionPanel.Controls.Add(textBoxPort);
+			rpcapSectionPanel.Controls.Add(darkLabel4);
+			rpcapSectionPanel.Controls.Add(textBoxHost);
+			rpcapSectionPanel.Controls.Add(darkLabel3);
+			rpcapSectionPanel.Dock = DockStyle.Top;
+			rpcapSectionPanel.Location = new Point(0, 249);
+			rpcapSectionPanel.Name = "rpcapSectionPanel";
+			rpcapSectionPanel.SectionHeader = "RPCAP";
+			rpcapSectionPanel.Size = new Size(803, 227);
+			rpcapSectionPanel.TabIndex = 3;
+			// 
+			// darkLabel12
+			// 
+			darkLabel12.AutoSize = true;
+			darkLabel12.ForeColor = Color.FromArgb(220, 220, 220);
+			darkLabel12.Location = new Point(12, 212);
+			darkLabel12.Name = "darkLabel12";
+			darkLabel12.Size = new Size(60, 17);
+			darkLabel12.TabIndex = 15;
+			darkLabel12.Text = "Warning:";
+			// 
+			// darkLabel11
+			// 
+			darkLabel11.AutoSize = true;
+			darkLabel11.ForeColor = Color.LightCoral;
+			darkLabel11.Location = new Point(79, 212);
+			darkLabel11.Name = "darkLabel11";
+			darkLabel11.Size = new Size(579, 34);
+			darkLabel11.TabIndex = 14;
+			darkLabel11.Text = "The username and password are sent over the network to the capture server ***IN CLEAR TEXT***\r\nBecause of this credentials are also stored unenecrypted for now.";
+			// 
+			// darkLabel10
+			// 
+			darkLabel10.AutoSize = true;
+			darkLabel10.ForeColor = Color.Gray;
+			darkLabel10.Location = new Point(315, 176);
+			darkLabel10.Name = "darkLabel10";
+			darkLabel10.Size = new Size(507, 17);
+			darkLabel10.TabIndex = 13;
+			darkLabel10.Text = "Specifies the password that has to be used on the remote machine for authentication.";
+			// 
+			// darkLabel9
+			// 
+			darkLabel9.AutoSize = true;
+			darkLabel9.ForeColor = Color.Gray;
+			darkLabel9.Location = new Point(315, 143);
+			darkLabel9.Name = "darkLabel9";
+			darkLabel9.Size = new Size(507, 17);
+			darkLabel9.TabIndex = 12;
+			darkLabel9.Text = "Specifies the username that has to be used on the remote machine for authentication.";
+			// 
+			// darkLabel8
+			// 
+			darkLabel8.AutoSize = true;
+			darkLabel8.ForeColor = Color.FromArgb(220, 220, 220);
+			darkLabel8.Location = new Point(12, 176);
+			darkLabel8.Name = "darkLabel8";
+			darkLabel8.Size = new Size(67, 17);
+			darkLabel8.TabIndex = 10;
+			darkLabel8.Text = "Password:";
+			// 
+			// darkLabel7
+			// 
+			darkLabel7.AutoSize = true;
+			darkLabel7.ForeColor = Color.FromArgb(220, 220, 220);
+			darkLabel7.Location = new Point(12, 143);
+			darkLabel7.Name = "darkLabel7";
+			darkLabel7.Size = new Size(70, 17);
+			darkLabel7.TabIndex = 9;
+			darkLabel7.Text = "Username:";
+			// 
+			// textBoxPassword
+			// 
+			textBoxPassword.BackColor = Color.FromArgb(69, 73, 74);
+			textBoxPassword.BorderStyle = BorderStyle.FixedSingle;
+			textBoxPassword.ForeColor = Color.FromArgb(220, 220, 220);
+			textBoxPassword.Location = new Point(82, 173);
+			textBoxPassword.Name = "textBoxPassword";
+			textBoxPassword.Size = new Size(227, 23);
+			textBoxPassword.TabIndex = 8;
+			textBoxPassword.UseSystemPasswordChar = true;
+			textBoxPassword.TextChanged += TextBoxPassword_TextChanged;
+			// 
+			// textBoxUsername
+			// 
+			textBoxUsername.BackColor = Color.FromArgb(69, 73, 74);
+			textBoxUsername.BorderStyle = BorderStyle.FixedSingle;
+			textBoxUsername.ForeColor = Color.FromArgb(220, 220, 220);
+			textBoxUsername.Location = new Point(82, 141);
+			textBoxUsername.Name = "textBoxUsername";
+			textBoxUsername.Size = new Size(227, 23);
+			textBoxUsername.TabIndex = 7;
+			textBoxUsername.TextChanged += TextBoxUsername_TextChanged;
+			// 
+			// darkLabel6
+			// 
+			darkLabel6.AutoSize = true;
+			darkLabel6.ForeColor = Color.Gray;
+			darkLabel6.Location = new Point(315, 110);
+			darkLabel6.Name = "darkLabel6";
+			darkLabel6.Size = new Size(469, 17);
+			darkLabel6.TabIndex = 6;
+			darkLabel6.Text = "Specifies the network port (e.g. \"2002\") we want to use for the RPCAP protocol.";
+			// 
+			// darkLabel5
+			// 
+			darkLabel5.AutoSize = true;
+			darkLabel5.ForeColor = Color.FromArgb(220, 220, 220);
+			darkLabel5.Location = new Point(12, 110);
+			darkLabel5.Name = "darkLabel5";
+			darkLabel5.Size = new Size(35, 17);
+			darkLabel5.TabIndex = 5;
+			darkLabel5.Text = "Port:";
+			// 
+			// textBoxPort
+			// 
+			textBoxPort.BackColor = Color.FromArgb(69, 73, 74);
+			textBoxPort.BorderStyle = BorderStyle.FixedSingle;
+			textBoxPort.ForeColor = Color.FromArgb(220, 220, 220);
+			textBoxPort.Location = new Point(82, 108);
+			textBoxPort.Name = "textBoxPort";
+			textBoxPort.Size = new Size(227, 23);
+			textBoxPort.TabIndex = 4;
+			textBoxPort.TextChanged += TextBoxPort_TextChanged;
+			// 
+			// darkLabel4
+			// 
+			darkLabel4.AutoSize = true;
+			darkLabel4.ForeColor = Color.Gray;
+			darkLabel4.Location = new Point(315, 77);
+			darkLabel4.Name = "darkLabel4";
+			darkLabel4.Size = new Size(367, 17);
+			darkLabel4.TabIndex = 3;
+			darkLabel4.Text = "Specifies the host (e.g. \"foo.bar.com\") we want to connect to. \r\n";
+			// 
+			// textBoxHost
+			// 
+			textBoxHost.BackColor = Color.FromArgb(69, 73, 74);
+			textBoxHost.BorderStyle = BorderStyle.FixedSingle;
+			textBoxHost.ForeColor = Color.FromArgb(220, 220, 220);
+			textBoxHost.Location = new Point(82, 75);
+			textBoxHost.Name = "textBoxHost";
+			textBoxHost.Size = new Size(227, 23);
+			textBoxHost.TabIndex = 2;
+			textBoxHost.TextChanged += TextBoxHost_TextChanged;
+			// 
+			// darkLabel3
+			// 
+			darkLabel3.AutoSize = true;
+			darkLabel3.ForeColor = Color.FromArgb(220, 220, 220);
+			darkLabel3.Location = new Point(12, 77);
+			darkLabel3.Name = "darkLabel3";
+			darkLabel3.Size = new Size(38, 17);
+			darkLabel3.TabIndex = 1;
+			darkLabel3.Text = "Host:";
+			// 
+			// darkSectionPanel4
+			// 
+			darkSectionPanel4.Controls.Add(debugBox);
+			darkSectionPanel4.Dock = DockStyle.Fill;
+			darkSectionPanel4.Location = new Point(0, 598);
+			darkSectionPanel4.Name = "darkSectionPanel4";
+			darkSectionPanel4.SectionHeader = "Debug Log";
+			darkSectionPanel4.Size = new Size(803, 168);
+			darkSectionPanel4.TabIndex = 5;
+			// 
+			// debugBox
+			// 
+			debugBox.BackColor = Color.FromArgb(69, 73, 74);
+			debugBox.BorderStyle = BorderStyle.None;
+			debugBox.Dock = DockStyle.Fill;
+			debugBox.ForeColor = Color.FromArgb(220, 220, 220);
+			debugBox.Location = new Point(1, 25);
+			debugBox.Multiline = true;
+			debugBox.Name = "debugBox";
+			debugBox.ReadOnly = true;
+			debugBox.ScrollBars = ScrollBars.Vertical;
+			debugBox.Size = new Size(801, 142);
+			debugBox.TabIndex = 0;
+			debugBox.TextChanged += debugBox_TextChanged;
+			// 
+			// opPanel
+			// 
+			opPanel.Controls.Add(opLabel);
+			opPanel.Dock = DockStyle.Top;
+			opPanel.Location = new Point(0, 476);
+			opPanel.Name = "opPanel";
+			opPanel.Size = new Size(803, 122);
+			opPanel.TabIndex = 6;
+			// 
+			// opLabel
+			// 
+			opLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			opLabel.ForeColor = Color.FromArgb(220, 220, 220);
+			opLabel.Location = new Point(569, 39);
+			opLabel.Name = "opLabel";
+			opLabel.RightToLeft = RightToLeft.Yes;
+			opLabel.Size = new Size(222, 24);
+			opLabel.TabIndex = 0;
+			opLabel.Text = "...Searching for game";
+			opLabel.TextAlign = ContentAlignment.MiddleLeft;
+			// 
+			// SettingsForm
+			// 
+			AutoScaleDimensions = new SizeF(7F, 17F);
+			AutoScaleMode = AutoScaleMode.Font;
+			ClientSize = new Size(803, 783);
+			Controls.Add(darkSectionPanel4);
+			Controls.Add(opPanel);
+			Controls.Add(rpcapSectionPanel);
+			Controls.Add(darkSectionPanel1);
+			Controls.Add(label1);
+			Icon = (Icon)resources.GetObject("$this.Icon");
+			MinimumSize = new Size(819, 244);
+			Name = "SettingsForm";
+			Text = "IINACT";
+			FormClosing += Form1_FormClosing;
+			darkSectionPanel1.ResumeLayout(false);
+			darkSectionPanel1.PerformLayout();
+			rpcapSectionPanel.ResumeLayout(false);
+			rpcapSectionPanel.PerformLayout();
+			darkSectionPanel4.ResumeLayout(false);
+			darkSectionPanel4.PerformLayout();
+			opPanel.ResumeLayout(false);
+			ResumeLayout(false);
+			PerformLayout();
+		}
 
-        }
-
-        #endregion
-        private Label label1;
-        private DarkSectionPanel darkSectionPanel1;
-        private DarkCheckBox checkBoxDebug;
-        private DarkCheckBox checkBoxDotTick;
-        private DarkCheckBox checkBoxDotCrit;
-        private DarkCheckBox checkBoxPets;
-        private DarkCheckBox checkBoxShield;
-        private DarkLabel darkLabel2;
-        private DarkComboBox comboBoxFilter;
-        private DarkComboBox comboBoxLang;
-        private DarkLabel darkLabel1;
-        private DarkSectionPanel rpcapSectionPanel;
-        private DarkLabel darkLabel6;
-        private DarkLabel darkLabel5;
-        private DarkTextBox textBoxPort;
-        private DarkLabel darkLabel4;
-        private DarkTextBox textBoxHost;
-        private DarkLabel darkLabel3;
-        private DarkSectionPanel darkSectionPanel4;
-        private DarkLabel darkLabel12;
-        private DarkLabel darkLabel11;
-        private DarkLabel darkLabel10;
-        private DarkLabel darkLabel9;
-        private DarkCheckBox checkBoxRpcap;
-        private DarkLabel darkLabel8;
-        private DarkLabel darkLabel7;
-        private DarkTextBox textBoxPassword;
-        private DarkTextBox textBoxUsername;
-        private DarkTextBox debugBox;
-        private DarkLabel darkLabel14;
-        private Panel opPanel;
-        private DarkLabel opLabel;
-        private DarkLabel logFileLabel;
-        private DarkButton logFileButton;
-        private FolderBrowserDialog logFolderBrowserDialog;
-    }
+		#endregion
+		private Label label1;
+		private DarkSectionPanel darkSectionPanel1;
+		private DarkCheckBox checkBoxDebug;
+		private DarkCheckBox checkBoxDotTick;
+		private DarkCheckBox checkBoxDotCrit;
+		private DarkCheckBox checkBoxPets;
+		private DarkCheckBox checkBoxShield;
+		private DarkLabel darkLabel2;
+		private DarkComboBox comboBoxFilter;
+		private DarkComboBox comboBoxLang;
+		private DarkLabel darkLabel1;
+		private DarkSectionPanel rpcapSectionPanel;
+		private DarkLabel darkLabel6;
+		private DarkLabel darkLabel5;
+		private DarkTextBox textBoxPort;
+		private DarkLabel darkLabel4;
+		private DarkTextBox textBoxHost;
+		private DarkLabel darkLabel3;
+		private DarkSectionPanel darkSectionPanel4;
+		private DarkLabel darkLabel12;
+		private DarkLabel darkLabel11;
+		private DarkLabel darkLabel10;
+		private DarkLabel darkLabel9;
+		private DarkCheckBox checkBoxRpcap;
+		private DarkLabel darkLabel8;
+		private DarkLabel darkLabel7;
+		private DarkTextBox textBoxPassword;
+		private DarkTextBox textBoxUsername;
+		private DarkTextBox debugBox;
+		private DarkLabel darkLabel14;
+		private Panel opPanel;
+		private DarkLabel opLabel;
+		private DarkLabel logFileLabel;
+		private DarkButton logFileButton;
+		private FolderBrowserDialog logFolderBrowserDialog;
+	}
 }
