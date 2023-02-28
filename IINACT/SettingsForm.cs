@@ -87,6 +87,9 @@ namespace IINACT
 			ActGlobals.oFormActMain.OverlayPluginContainer = container;
 
 			pluginMain.InitPlugin(opPanel, opLabel);
+			var post = new PostNamazu.PostNamazu();
+			post.InitPlugin(opPanel,opLabel);
+
 		}
 
 		protected override void OnHandleCreated(EventArgs e)

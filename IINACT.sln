@@ -19,6 +19,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFXIVClientStructs", "FFXIV
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFXIVClientStructs.InteropSourceGenerators", "FFXIVClientStructs\FFXIVClientStructs.InteropSourceGenerators\FFXIVClientStructs.InteropSourceGenerators.csproj", "{AE3AB301-35D7-4215-B034-28AE83D9AF67}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PostNamazu", "PostNamazu", "{0F18A1CF-1483-4CC5-B7D0-647D4C02BC08}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostNamazu", "PostNamazu\PostNamazu.csproj", "{63AF9824-73D3-4BED-BEDD-6AC0AC8FD352}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostNamazu.OverlayHoster", "PostNamazu.OverlayHoster\PostNamazu.OverlayHoster.csproj", "{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,9 +80,25 @@ Global
 		{AE3AB301-35D7-4215-B034-28AE83D9AF67}.NuGet|Any CPU.Build.0 = Debug|Any CPU
 		{AE3AB301-35D7-4215-B034-28AE83D9AF67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE3AB301-35D7-4215-B034-28AE83D9AF67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63AF9824-73D3-4BED-BEDD-6AC0AC8FD352}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63AF9824-73D3-4BED-BEDD-6AC0AC8FD352}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63AF9824-73D3-4BED-BEDD-6AC0AC8FD352}.NuGet|Any CPU.ActiveCfg = Debug|Any CPU
+		{63AF9824-73D3-4BED-BEDD-6AC0AC8FD352}.NuGet|Any CPU.Build.0 = Debug|Any CPU
+		{63AF9824-73D3-4BED-BEDD-6AC0AC8FD352}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63AF9824-73D3-4BED-BEDD-6AC0AC8FD352}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}.NuGet|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}.NuGet|Any CPU.Build.0 = Debug|Any CPU
+		{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{63AF9824-73D3-4BED-BEDD-6AC0AC8FD352} = {0F18A1CF-1483-4CC5-B7D0-647D4C02BC08}
+		{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55} = {0F18A1CF-1483-4CC5-B7D0-647D4C02BC08}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {465F1BA3-0419-46B3-AE0C-39701F2F6A79}
