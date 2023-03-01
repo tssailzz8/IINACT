@@ -79,10 +79,10 @@ namespace PostNamazu.Actions
 
             Waymark ReadWaymark(IntPtr addr, WaymarkID id) => new()
             {
-                X = Memory.Read<float>(addr),
-                Y = Memory.Read<float>(addr + 0x4),
-                Z = Memory.Read<float>(addr + 0x8),
-                Active = Memory.Read<byte>(addr + 0x1C) == 1,
+                X = Memory.Memory.Read<float>(addr),
+                Y = Memory.Memory.Read<float>(addr + 0x4),
+                Z = Memory.Memory.Read<float>(addr + 0x8),
+                Active = Memory.Memory.Read<byte>(addr + 0x1C) == 1,
                 ID = id
             };
 
@@ -138,16 +138,16 @@ namespace PostNamazu.Actions
             };
 
             // Write the X, Y and Z coordinates
-            Memory.Write(markAddr, waymark.X);
-            Memory.Write(markAddr + 0x4, waymark.Y);
-            Memory.Write(markAddr + 0x8, waymark.Z);
+            Memory.Memory.Write(markAddr, waymark.X);
+            Memory.Memory.Write(markAddr + 0x4, waymark.Y);
+            Memory.Memory.Write(markAddr + 0x8, waymark.Z);
 
-            Memory.Write(markAddr + 0x10, (int)(waymark.X * 1000));
-            Memory.Write(markAddr + 0x14, (int)(waymark.Y * 1000));
-            Memory.Write(markAddr + 0x18, (int)(waymark.Z * 1000));
+            Memory.Memory.Write(markAddr + 0x10, (int)(waymark.X * 1000));
+            Memory.Memory.Write(markAddr + 0x14, (int)(waymark.Y * 1000));
+            Memory.Memory.Write(markAddr + 0x18, (int)(waymark.Z * 1000));
 
             // Write the active state
-            Memory.Write(markAddr + 0x1C, (byte)(waymark.Active ? 1 : 0));
+            Memory.Memory.Write(markAddr + 0x1C, (byte)(waymark.Active ? 1 : 0));
         }
 
     }

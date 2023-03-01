@@ -55,17 +55,14 @@ namespace PostNamazu.Actions
             if (ActorID != 0xE000000 &&  combatant == null) {
                 throw new Exception($"未能找到{ActorID}");
             }
-            var assemblyLock = Memory.Executor.AssemblyLock;
             var flag = false;
             try {
-                Monitor.Enter(assemblyLock, ref flag);
                 if (!localOnly)
-                    _ = Memory.CallInjected64<char>(MarkingFunc, MarkingController, markingType, ActorID);
+                    _ = Memory.Execute(MarkingFunc, MarkingController, markingType, ActorID);
                 else //本地标点的markingType从0开始，因此需要-1
-                    _ = Memory.CallInjected64<char>(LocalMarkingFunc, MarkingController, markingType - 1, ActorID, 0);
+                    _ = Memory.Execute(LocalMarkingFunc, MarkingController, markingType - 1, ActorID, 0);
             }
             finally {
-                if (flag) Monitor.Exit(assemblyLock);
             }
         }
     }

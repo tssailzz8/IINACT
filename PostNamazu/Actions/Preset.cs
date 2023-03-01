@@ -86,7 +86,7 @@ namespace PostNamazu.Actions
             };
             
             byte[] importdata = ConstructGamePreset(waymarks);
-            Memory.WriteBytes(SlotOffset, importdata);
+            Memory.Memory.WriteBytes(SlotOffset, importdata);
             
         }
         /// <summary>

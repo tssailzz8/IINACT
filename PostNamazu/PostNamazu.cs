@@ -1,5 +1,5 @@
 ﻿using Advanced_Combat_Tracker;
-using GreyMagic;
+using FFXIVClientStructs.Interop;
 using PostNamazu.Attributes;
 using PostNamazu.Common;
 using System;
@@ -9,8 +9,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using Zodiark;
 
 namespace PostNamazu
 {
@@ -18,7 +21,8 @@ namespace PostNamazu
 	{
 		public PostNamazu()
 		{
-			//AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+			var process = Process.GetProcessesByName("ffxiv_dx11")[0];
+			Memory= new ZodiarkProcess(process);
 		}
 
 		private Label _lblStatus; // The status label that appears in ACT's Plugin tab
@@ -30,7 +34,7 @@ namespace PostNamazu
 
 		internal Process FFXIV;
 		internal FFXIV_ACT_Plugin.FFXIV_ACT_Plugin FFXIV_ACT_Plugin;
-		internal ExternalProcessMemory Memory;
+		internal ZodiarkProcess Memory;
 		internal SigScanner SigScanner;
 
 		private IntPtr _entrancePtr;
@@ -142,14 +146,16 @@ namespace PostNamazu
 			MessageBox.Show(errorMessage);
 		}
 
+
 		/// <summary>
 		///     对当前解析插件对应的游戏进程进行注入
 		/// </summary>
-		private void Attach()
+		private unsafe void Attach()
 		{
 			try
 			{
-				Memory = new ExternalProcessMemory(FFXIV, true, false, _entrancePtr, false, 5, true);
+
+				//Memory = new ExternalProcessMemory(FFXIV, true, false, _entrancePtr, false, 5, true);
 			}
 			catch (Exception ex)
 			{
@@ -169,8 +175,8 @@ namespace PostNamazu
 		{
 			try
 			{
-				if (Memory != null && !Memory.Process.HasExited)
-					Memory.Dispose();
+
+					
 			}
 			catch (Exception)
 			{
@@ -313,8 +319,8 @@ namespace PostNamazu
 			switch (name)
 			{
 				case "GreyMagic":
-					var selfPluginData = Assembly.GetExecutingAssembly();
-					var path = selfPluginData.Location;
+					var selfPluginData = Assembly.GetExecutingAssembly().Location;
+					var path = Path.GetDirectoryName(selfPluginData);
 					return Assembly.LoadFile($@"{path}\{name}.dll");
 				default:
 					return null;

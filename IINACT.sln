@@ -23,7 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PostNamazu", "PostNamazu", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostNamazu", "PostNamazu\PostNamazu.csproj", "{63AF9824-73D3-4BED-BEDD-6AC0AC8FD352}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostNamazu.OverlayHoster", "PostNamazu.OverlayHoster\PostNamazu.OverlayHoster.csproj", "{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostNamazu.OverlayHoster", "PostNamazu.OverlayHoster\PostNamazu.OverlayHoster.csproj", "{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zodiark", "Zodiark\Zodiark.csproj", "{B875EAF5-57AC-4222-BFBE-06BFFEEC93EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +94,12 @@ Global
 		{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}.NuGet|Any CPU.Build.0 = Debug|Any CPU
 		{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B20BFF9-03A8-4766-BC62-A6D1D4C72A55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B875EAF5-57AC-4222-BFBE-06BFFEEC93EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B875EAF5-57AC-4222-BFBE-06BFFEEC93EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B875EAF5-57AC-4222-BFBE-06BFFEEC93EA}.NuGet|Any CPU.ActiveCfg = Debug|Any CPU
+		{B875EAF5-57AC-4222-BFBE-06BFFEEC93EA}.NuGet|Any CPU.Build.0 = Debug|Any CPU
+		{B875EAF5-57AC-4222-BFBE-06BFFEEC93EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B875EAF5-57AC-4222-BFBE-06BFFEEC93EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

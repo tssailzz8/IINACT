@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NotACT\NotACT.csproj" />
     <ProjectReference Include="..\PostNamazu.OverlayHoster\PostNamazu.OverlayHoster.csproj" />
+    <ProjectReference Include="..\Zodiark\Zodiark.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,9 +50,16 @@
       <HintPath>..\external_dependencies\SDK\FFXIV_ACT_Plugin.Resource.dll</HintPath>
 		<Private>False</Private>
     </Reference>
-    <Reference Include="GreyMagic">
-      <HintPath>..\external_dependencies\GreyMagic.dll</HintPath>
-    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="FASM-LICENSE.TXT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Costura64\" />
   </ItemGroup>
 
 </Project>

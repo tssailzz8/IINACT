@@ -4,6 +4,7 @@ using DarkUI.Forms;
 using FFXIV_ACT_Plugin.Common;
 using FFXIV_ACT_Plugin.Config;
 using IINACT.Properties;
+using PostNamazu;
 using RainbowMage.OverlayPlugin;
 
 namespace IINACT
@@ -58,20 +59,20 @@ namespace IINACT
 		{
 			try
 			{
-				var currentVersion = new Version(Application.ProductVersion);
-				var remoteVersionString =
-					new HttpClient().GetStringAsync("https://github.com/marzent/IINACT/raw/main/version").Result;
-				var remoteVersion = new Version(remoteVersionString);
-				if (remoteVersion <= currentVersion) return;
-				if (MessageBox.Show("An newer version of IINACT is available. Would you like to download it?",
-						"Update available", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
-				{
-					Process.Start("explorer", "https://github.com/marzent/IINACT/releases/latest");
-				}
+				//var currentVersion = new Version(Application.ProductVersion);
+				//var remoteVersionString =
+				//	new HttpClient().GetStringAsync("https://github.com/marzent/IINACT/raw/main/version").Result;
+				//var remoteVersion = new Version(remoteVersionString);
+				//if (remoteVersion <= currentVersion) return;
+				//if (MessageBox.Show("An newer version of IINACT is available. Would you like to download it?",
+				//		"Update available", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
+				//{
+				//	Process.Start("explorer", "https://github.com/marzent/IINACT/releases/latest");
+				//}
 			}
 			catch
 			{
-				MessageBox.Show("Failed to check for updates.");
+				//MessageBox.Show("Failed to check for updates.");
 			}
 		}
 
@@ -88,7 +89,7 @@ namespace IINACT
 
 			pluginMain.InitPlugin(opPanel, opLabel);
 			var post = new PostNamazu.PostNamazu();
-			post.InitPlugin(opPanel,opLabel);
+			post.InitPlugin(opPanel, opLabel);
 
 		}
 

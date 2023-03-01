@@ -1,11 +1,11 @@
-﻿using GreyMagic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Zodiark;
 
 namespace PostNamazu.Common
 {
@@ -14,7 +14,7 @@ namespace PostNamazu.Common
 		protected PostNamazu PostNamazu;
 		protected FFXIV_ACT_Plugin.FFXIV_ACT_Plugin FFXIV_ACT_Plugin => PostNamazu?.FFXIV_ACT_Plugin;
 		protected Process FFXIV => PostNamazu?.FFXIV;
-		protected ExternalProcessMemory Memory => PostNamazu?.Memory;
+		protected ZodiarkProcess Memory => PostNamazu?.Memory;
 		protected SigScanner SigScanner => PostNamazu?.SigScanner;
 
 		internal bool isReady = false;
