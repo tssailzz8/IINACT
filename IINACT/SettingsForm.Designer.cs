@@ -413,6 +413,7 @@ namespace IINACT
 			// 
 			// debugBox
 			// 
+			debugBox.AllowDrop = true;
 			debugBox.BackColor = Color.FromArgb(69, 73, 74);
 			debugBox.BorderStyle = BorderStyle.None;
 			debugBox.Dock = DockStyle.Fill;
