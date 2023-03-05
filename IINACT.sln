@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PostNamazu.OverlayHoster", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zodiark", "Zodiark\Zodiark.csproj", "{B875EAF5-57AC-4222-BFBE-06BFFEEC93EA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CactbotSelf", "CactbotSelf\CactbotSelf.csproj", "{C576C5D1-73D1-44FF-8BCD-E3D649848BB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +102,12 @@ Global
 		{B875EAF5-57AC-4222-BFBE-06BFFEEC93EA}.NuGet|Any CPU.Build.0 = Debug|Any CPU
 		{B875EAF5-57AC-4222-BFBE-06BFFEEC93EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B875EAF5-57AC-4222-BFBE-06BFFEEC93EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C576C5D1-73D1-44FF-8BCD-E3D649848BB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C576C5D1-73D1-44FF-8BCD-E3D649848BB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C576C5D1-73D1-44FF-8BCD-E3D649848BB2}.NuGet|Any CPU.ActiveCfg = Debug|Any CPU
+		{C576C5D1-73D1-44FF-8BCD-E3D649848BB2}.NuGet|Any CPU.Build.0 = Debug|Any CPU
+		{C576C5D1-73D1-44FF-8BCD-E3D649848BB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C576C5D1-73D1-44FF-8BCD-E3D649848BB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

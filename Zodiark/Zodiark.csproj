@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <Reference Include="Iced">
-      <HintPath>..\..\csharp\Intel\Iced\bin\Release\net7.0\Iced.dll</HintPath>
+      <HintPath>..\external_dependencies\Iced.dll</HintPath>
     </Reference>
   </ItemGroup>
 

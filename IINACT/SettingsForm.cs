@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Advanced_Combat_Tracker;
+using CactbotSelf;
 using DarkUI.Forms;
 using FFXIV_ACT_Plugin.Common;
 using FFXIV_ACT_Plugin.Config;
@@ -90,7 +91,8 @@ namespace IINACT
 			pluginMain.InitPlugin(opPanel, opLabel);
 			var post = new PostNamazu.PostNamazu();
 			post.InitPlugin(opPanel, opLabel);
-
+			var cactboSelf=new CactbotSelf.CactbotSelf();
+			cactboSelf.InitPlugin(opPanel, opLabel);
 		}
 
 		protected override void OnHandleCreated(EventArgs e)
