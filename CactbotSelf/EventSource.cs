@@ -210,7 +210,7 @@ namespace CactbotSelf
 		public MainClass mainClass;
 		public void Init()
 		{
-			//获取sig
+			//获取sig;
 			var window = NativeMethods.FindWindow("FFXIVGAME", null);
 			NativeMethods.GetWindowThreadProcessId(window, out var pid);
 			var proc = Process.GetProcessById(Convert.ToInt32(pid));

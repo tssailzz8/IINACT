@@ -19,6 +19,8 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using FFXIV_ACT_Plugin.Common.Models;
 using FFXIV_ACT_Plugin.Logfile;
+using System.IO.Pipes;
+using System.Text;
 
 namespace CactbotSelf
 {
@@ -82,6 +84,7 @@ namespace CactbotSelf
 			//var iocContainer = (TinyIoCContainer)typeof(FFXIV_ACT_Plugin.FFXIV_ACT_Plugin).GetField("_iocContainer", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(ffxivPlugin);
 			if (iocContainer != null) CombatantManager = iocContainer.Resolve<ICombatantManager>();
 			ffxivPlugin.DataSubscription.NetworkReceived += new NetworkReceivedDelegate(this.MoreLogLines_OnNetworkReceived);
+			var pi = new Pipe();
 		}
 		public uint GetMapeffect()
 		{
@@ -457,6 +460,17 @@ namespace CactbotSelf
 			line = $"] ChatLog 00:0:{type}:" + line;
 			_logOutput.WriteLine((FFXIV_ACT_Plugin.Logfile.LogMessageType)254, packetDate, line);
 
+			return true;
+		}
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		internal bool WriteLogLineImpl(int ID, string line)
+		{
+			if (_logOutput == null)
+			{
+				_logOutput = (ILogOutput)ffxivPlugin._iocContainer.GetService(typeof(ILogOutput));
+			}
+			var timestamp = DateTime.Now;
+			_logOutput?.WriteLine((FFXIV_ACT_Plugin.Logfile.LogMessageType)ID, timestamp, line);
 			return true;
 		}
 		private unsafe void ProcessActorMove(uint actorId, FFXIVIpcActorMove* message)
