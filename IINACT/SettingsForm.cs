@@ -1,6 +1,8 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using Advanced_Combat_Tracker;
 using CactbotSelf;
+using DarkUI.Controls;
 using DarkUI.Forms;
 using FFXIV_ACT_Plugin.Common;
 using FFXIV_ACT_Plugin.Config;
@@ -12,10 +14,20 @@ namespace IINACT
 {
 	public partial class SettingsForm : DarkForm
 	{
+		public List<string> shunxu = new List<string> { "黑骑", "枪刃", "战士", "骑士", "白魔", "占星", "贤者", "学者", "武士", "武僧", "镰刀", "龙骑", "忍者", "机工", "舞者", "诗人", "黑魔", "召唤", "赤魔" };
 		public SettingsForm(int targetPid)
 		{
 			InitializeComponent();
 			comboBoxLang.DataSource = Enum.GetValues(typeof(Language));
+			if (Settings.Default.shunxu.Count < shunxu.Count)
+			{
+				Settings.Default.shunxu = shunxu;
+
+			}
+			for (int i = 0; i < Settings.Default.shunxu.Count; i++)
+			{
+				listView1.Items.Add($@"[{i}]{Settings.Default.shunxu[i]}");
+			}
 			comboBoxLang.SelectedIndex = Settings.Default.Language - 1;
 			comboBoxLang.SelectedIndexChanged += comboBoxLang_SelectedIndexChanged;
 			comboBoxFilter.DataSource = Enum.GetValues(typeof(ParseFilterMode));
@@ -32,11 +44,12 @@ namespace IINACT
 			textBoxUsername.Text = Settings.Default.RPcapUsername;
 			textBoxPassword.Text = Settings.Default.RPcapPassword;
 			rpcapSectionPanel.Height = Settings.Default.RPcap ? 200 : 0;
+			darkSectionPanel2.Height = Settings.Default.AdjustOrder ? 200 : 0;
 			logFileButton.Click += logFileButton_Clicked;
 			if (Directory.Exists(Settings.Default.LogFilePath))
 				ActGlobals.oFormActMain.LogFilePath = Settings.Default.LogFilePath;
 			logFileButton.Text = ActGlobals.oFormActMain.LogFilePath;
-
+			AdjustOrer.Checked = Settings.Default.AdjustOrder;
 			//create window handle
 			Opacity = 0;
 			Show();
@@ -76,7 +89,7 @@ namespace IINACT
 				//MessageBox.Show("Failed to check for updates.");
 			}
 		}
-
+		CactbotSelf.CactbotSelf cactboSelf;
 		private void InitOverlayPlugin()
 		{
 			var container = new TinyIoCContainer();
@@ -89,10 +102,21 @@ namespace IINACT
 			ActGlobals.oFormActMain.OverlayPluginContainer = container;
 
 			pluginMain.InitPlugin(opPanel, opLabel);
+			Settings.Default.SettingsSaving += Save;
 			var post = new PostNamazu.PostNamazu();
 			post.InitPlugin(opPanel, opLabel);
-			var cactboSelf=new CactbotSelf.CactbotSelf();
+			cactboSelf = new CactbotSelf.CactbotSelf(Settings.Default.shunxu, Settings.Default.PostNamazuUse);
 			cactboSelf.InitPlugin(opPanel, opLabel);
+		}
+
+		private void Save(object sender, CancelEventArgs e)
+		{
+			if (sender is Settings set)
+			{
+				cactboSelf.ChangeSetting(set.shunxu, set.PostNamazuUse);
+			}
+
+
 		}
 
 		protected override void OnHandleCreated(EventArgs e)
@@ -198,6 +222,119 @@ namespace IINACT
 		private void debugBox_TextChanged(object sender, EventArgs e)
 		{
 
+		}
+
+		private void darkSectionPanel2_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private void rpcapSectionPanel_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private void AdjustOrer_CheckedChanged(object sender, EventArgs e)
+		{
+			Settings.Default.AdjustOrder = AdjustOrer.Checked;
+			Settings.Default.Save();
+			darkSectionPanel2.Height = Settings.Default.AdjustOrder ? 200 : 0;
+		}
+
+		private void opPanel_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private void darkListView1_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void comboBoxLang_SelectedIndexChanged_1(object sender, EventArgs e)
+		{
+
+		}
+
+		private void Rise_Click(object sender, EventArgs e)
+		{
+			if (listView1.SelectedIndices != null && listView1.SelectedIndices.Count > 0)
+			{
+				var c = listView1.SelectedIndices;
+				var b = listView1.Items[c[0]].Text;
+				var 选中的 = c[0];
+				if (选中的 >= 1)
+				{
+					listView1.BeginUpdate();
+					var 交换 = Settings.Default.shunxu[选中的];
+					Settings.Default.shunxu[选中的] = Settings.Default.shunxu[选中的 - 1];
+					Settings.Default.shunxu[选中的 - 1] = 交换;
+					listView1.Items.Clear();
+					for (int i = 0; i < Settings.Default.shunxu.Count; i++)
+					{
+						listView1.Items.Add($@"[{i}]{Settings.Default.shunxu[i]}");
+					}
+					listView1.EndUpdate();
+					listView1.Focus();
+					listView1.Items[选中的 - 1].Focused = true;
+					listView1.Items[选中的 - 1].Selected = true;
+					Settings.Default.Save();
+				}
+
+
+			}
+		}
+
+		private void Down_Click(object sender, EventArgs e)
+		{
+			if (listView1.SelectedIndices != null && listView1.SelectedIndices.Count > 0)
+			{
+				var c = listView1.SelectedIndices;
+				var b = listView1.Items[c[0]].Text;
+				var 选中的 = c[0];
+				if (选中的 >= 1)
+				{
+					listView1.BeginUpdate();
+					var 交换 = Settings.Default.shunxu[选中的];
+					Settings.Default.shunxu[选中的] = Settings.Default.shunxu[选中的 + 1];
+					Settings.Default.shunxu[选中的 - 1] = 交换;
+					listView1.Items.Clear();
+					for (int i = 0; i < Settings.Default.shunxu.Count; i++)
+					{
+						listView1.Items.Add($@"[{i}]{Settings.Default.shunxu[i]}");
+					}
+					listView1.EndUpdate();
+					listView1.Focus();
+					listView1.Items[选中的 - 1].Focused = true;
+					listView1.Items[选中的 - 1].Selected = true;
+					Settings.Default.Save();
+				}
+
+
+			}
+		}
+
+		private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void Initi_Click(object sender, EventArgs e)
+		{
+			Settings.Default.shunxu = shunxu;
+			listView1.Items.Clear();
+			for (int i = 0; i < Settings.Default.shunxu.Count; i++)
+			{
+				listView1.Items.Add($@"[{i}]{Settings.Default.shunxu[i]}");
+			}
+			Settings.Default.Save();
+
+		}
+
+		private void PostNamazu_CheckedChanged(object sender, EventArgs e)
+		{
+			Settings.Default.PostNamazuUse = PostNamazu.Checked;
+			Settings.Default.Save();
 		}
 	}
 }

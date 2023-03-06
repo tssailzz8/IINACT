@@ -12,6 +12,7 @@ using Advanced_Combat_Tracker;
 using RainbowMage.OverlayPlugin.EventSources;
 using Newtonsoft.Json.Linq;
 using RainbowMage.OverlayPlugin;
+using YamlDotNet.Serialization;
 
 namespace CactbotSelf
 {
@@ -54,11 +55,11 @@ namespace CactbotSelf
 			RegisterEventHandler("getConfig", (msg) =>
 			{
 				var send = new JSEvents.GetConfigEvent();
-				send.isOpen = Config.open;
+				send.isOpen = CactbotSelf.cactbotSelf.usePostNanazu;
 				var list = new List<JSEvents.ShunXu>();
-				for (int i = 0; i < Config.shunxu.Count; i++)
+				for (int i = 0; i < CactbotSelf.cactbotSelf.ShunXu.Count; i++)
 				{
-					var shunxu = new JSEvents.ShunXu(i, Config.shunxu[i]);
+					var shunxu = new JSEvents.ShunXu(i, CactbotSelf.cactbotSelf.ShunXu[i]);
 					list.Add(shunxu);
 				}
 				send.shunxu = list;

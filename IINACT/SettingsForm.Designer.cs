@@ -35,6 +35,7 @@ namespace IINACT
 			ComponentResourceManager resources = new ComponentResourceManager(typeof(SettingsForm));
 			label1 = new Label();
 			darkSectionPanel1 = new DarkSectionPanel();
+			AdjustOrer = new DarkCheckBox();
 			darkLabel14 = new DarkLabel();
 			checkBoxDebug = new DarkCheckBox();
 			checkBoxDotTick = new DarkCheckBox();
@@ -68,23 +69,31 @@ namespace IINACT
 			opPanel = new Panel();
 			opLabel = new DarkLabel();
 			logFolderBrowserDialog = new FolderBrowserDialog();
+			darkSectionPanel2 = new DarkSectionPanel();
+			Initi = new DarkButton();
+			listView1 = new ListView();
+			Down = new DarkButton();
+			Rise = new DarkButton();
+			PostNamazu = new DarkCheckBox();
 			darkSectionPanel1.SuspendLayout();
 			rpcapSectionPanel.SuspendLayout();
 			darkSectionPanel4.SuspendLayout();
 			opPanel.SuspendLayout();
+			darkSectionPanel2.SuspendLayout();
 			SuspendLayout();
 			// 
 			// label1
 			// 
 			label1.AutoSize = true;
 			label1.Dock = DockStyle.Bottom;
-			label1.Location = new Point(0, 766);
+			label1.Location = new Point(0, 926);
 			label1.Name = "label1";
 			label1.Size = new Size(0, 17);
 			label1.TabIndex = 1;
 			// 
 			// darkSectionPanel1
 			// 
+			darkSectionPanel1.Controls.Add(AdjustOrer);
 			darkSectionPanel1.Controls.Add(darkLabel14);
 			darkSectionPanel1.Controls.Add(checkBoxDebug);
 			darkSectionPanel1.Controls.Add(checkBoxDotTick);
@@ -104,6 +113,16 @@ namespace IINACT
 			darkSectionPanel1.SectionHeader = "Parse Settings";
 			darkSectionPanel1.Size = new Size(803, 249);
 			darkSectionPanel1.TabIndex = 2;
+			// 
+			// AdjustOrer
+			// 
+			AdjustOrer.AutoSize = true;
+			AdjustOrer.Location = new Point(664, 151);
+			AdjustOrer.Name = "AdjustOrer";
+			AdjustOrer.Size = new Size(99, 21);
+			AdjustOrer.TabIndex = 12;
+			AdjustOrer.Text = "调整职业顺序";
+			AdjustOrer.CheckedChanged += AdjustOrer_CheckedChanged;
 			// 
 			// darkLabel14
 			// 
@@ -222,6 +241,7 @@ namespace IINACT
 			comboBoxLang.Name = "comboBoxLang";
 			comboBoxLang.Size = new Size(227, 24);
 			comboBoxLang.TabIndex = 1;
+			comboBoxLang.SelectedIndexChanged += comboBoxLang_SelectedIndexChanged_1;
 			// 
 			// darkLabel1
 			// 
@@ -253,8 +273,9 @@ namespace IINACT
 			rpcapSectionPanel.Location = new Point(0, 249);
 			rpcapSectionPanel.Name = "rpcapSectionPanel";
 			rpcapSectionPanel.SectionHeader = "RPCAP";
-			rpcapSectionPanel.Size = new Size(803, 227);
+			rpcapSectionPanel.Size = new Size(803, 263);
 			rpcapSectionPanel.TabIndex = 3;
+			rpcapSectionPanel.Paint += rpcapSectionPanel_Paint;
 			// 
 			// darkLabel12
 			// 
@@ -405,10 +426,10 @@ namespace IINACT
 			// 
 			darkSectionPanel4.Controls.Add(debugBox);
 			darkSectionPanel4.Dock = DockStyle.Fill;
-			darkSectionPanel4.Location = new Point(0, 598);
+			darkSectionPanel4.Location = new Point(0, 839);
 			darkSectionPanel4.Name = "darkSectionPanel4";
 			darkSectionPanel4.SectionHeader = "Debug Log";
-			darkSectionPanel4.Size = new Size(803, 168);
+			darkSectionPanel4.Size = new Size(803, 87);
 			darkSectionPanel4.TabIndex = 5;
 			// 
 			// debugBox
@@ -423,7 +444,7 @@ namespace IINACT
 			debugBox.Name = "debugBox";
 			debugBox.ReadOnly = true;
 			debugBox.ScrollBars = ScrollBars.Vertical;
-			debugBox.Size = new Size(801, 142);
+			debugBox.Size = new Size(801, 61);
 			debugBox.TabIndex = 0;
 			debugBox.TextChanged += debugBox_TextChanged;
 			// 
@@ -431,10 +452,11 @@ namespace IINACT
 			// 
 			opPanel.Controls.Add(opLabel);
 			opPanel.Dock = DockStyle.Top;
-			opPanel.Location = new Point(0, 476);
+			opPanel.Location = new Point(0, 512);
 			opPanel.Name = "opPanel";
-			opPanel.Size = new Size(803, 122);
+			opPanel.Size = new Size(803, 126);
 			opPanel.TabIndex = 6;
+			opPanel.Paint += opPanel_Paint;
 			// 
 			// opLabel
 			// 
@@ -448,12 +470,80 @@ namespace IINACT
 			opLabel.Text = "...Searching for game";
 			opLabel.TextAlign = ContentAlignment.MiddleLeft;
 			// 
+			// darkSectionPanel2
+			// 
+			darkSectionPanel2.Controls.Add(PostNamazu);
+			darkSectionPanel2.Controls.Add(Initi);
+			darkSectionPanel2.Controls.Add(listView1);
+			darkSectionPanel2.Controls.Add(Down);
+			darkSectionPanel2.Controls.Add(Rise);
+			darkSectionPanel2.Dock = DockStyle.Top;
+			darkSectionPanel2.Location = new Point(0, 638);
+			darkSectionPanel2.Name = "darkSectionPanel2";
+			darkSectionPanel2.SectionHeader = "Adjust";
+			darkSectionPanel2.Size = new Size(803, 201);
+			darkSectionPanel2.TabIndex = 16;
+			darkSectionPanel2.Paint += darkSectionPanel2_Paint;
+			// 
+			// Initi
+			// 
+			Initi.Location = new Point(152, 71);
+			Initi.Name = "Initi";
+			Initi.Padding = new Padding(5);
+			Initi.Size = new Size(40, 23);
+			Initi.TabIndex = 4;
+			Initi.Text = "Initi";
+			Initi.Click += Initi_Click;
+			// 
+			// listView1
+			// 
+			listView1.BackColor = Color.FromArgb(60, 63, 65);
+			listView1.ForeColor = SystemColors.Info;
+			listView1.Location = new Point(211, 6);
+			listView1.Name = "listView1";
+			listView1.Size = new Size(80, 189);
+			listView1.TabIndex = 3;
+			listView1.UseCompatibleStateImageBehavior = false;
+			listView1.View = View.SmallIcon;
+			listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
+			// 
+			// Down
+			// 
+			Down.Location = new Point(152, 123);
+			Down.Name = "Down";
+			Down.Padding = new Padding(5);
+			Down.Size = new Size(40, 23);
+			Down.TabIndex = 2;
+			Down.Text = "↓";
+			Down.Click += Down_Click;
+			// 
+			// Rise
+			// 
+			Rise.Location = new Point(152, 6);
+			Rise.Name = "Rise";
+			Rise.Padding = new Padding(5);
+			Rise.Size = new Size(40, 23);
+			Rise.TabIndex = 1;
+			Rise.Text = "↑";
+			Rise.Click += Rise_Click;
+			// 
+			// PostNamazu
+			// 
+			PostNamazu.AutoSize = true;
+			PostNamazu.Location = new Point(340, 24);
+			PostNamazu.Name = "PostNamazu";
+			PostNamazu.Size = new Size(147, 21);
+			PostNamazu.TabIndex = 5;
+			PostNamazu.Text = "触发器里面使用鲶鱼精";
+			PostNamazu.CheckedChanged += PostNamazu_CheckedChanged;
+			// 
 			// SettingsForm
 			// 
 			AutoScaleDimensions = new SizeF(7F, 17F);
 			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(803, 783);
+			ClientSize = new Size(803, 943);
 			Controls.Add(darkSectionPanel4);
+			Controls.Add(darkSectionPanel2);
 			Controls.Add(opPanel);
 			Controls.Add(rpcapSectionPanel);
 			Controls.Add(darkSectionPanel1);
@@ -470,6 +560,8 @@ namespace IINACT
 			darkSectionPanel4.ResumeLayout(false);
 			darkSectionPanel4.PerformLayout();
 			opPanel.ResumeLayout(false);
+			darkSectionPanel2.ResumeLayout(false);
+			darkSectionPanel2.PerformLayout();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -510,5 +602,12 @@ namespace IINACT
 		private DarkLabel logFileLabel;
 		private DarkButton logFileButton;
 		private FolderBrowserDialog logFolderBrowserDialog;
+		private DarkSectionPanel darkSectionPanel2;
+		private DarkCheckBox AdjustOrer;
+		private DarkButton Down;
+		private DarkButton Rise;
+		private ListView listView1;
+		private DarkButton Initi;
+		private DarkCheckBox PostNamazu;
 	}
 }

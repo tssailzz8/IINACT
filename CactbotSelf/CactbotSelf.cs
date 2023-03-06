@@ -15,7 +15,7 @@ using System.Xml.Linq;
 
 namespace CactbotSelf
 {
-	public class CactbotSelf 
+	public class CactbotSelf
 	{
 		public string pluginPath = "";
 		private static TinyIoCContainer TinyIoCContainer;
@@ -25,7 +25,10 @@ namespace CactbotSelf
 		public static Process FFXIV;
 		public static FFXIV_ACT_Plugin.FFXIV_ACT_Plugin ffxivPlugin;
 		public static MainClass mainClass;
+		public static CactbotSelf cactbotSelf;
 		public TabPage tabPagetabPagetabPage;
+		public List<string> ShunXu = new();
+		public bool usePostNanazu = false;
 		public Label labe;
 		public void DeInitPlugin()
 		{
@@ -47,7 +50,17 @@ namespace CactbotSelf
 			FieldInfo fieldInfo = type.GetField("_eventSources", BindingFlags.Instance | BindingFlags.NonPublic);
 			((List<IEventSource>)fieldInfo.GetValue(Registry)).Remove(EventSource);
 		}
-
+		public CactbotSelf(List<string> shunxu,bool PostNanazu)
+		{
+			ShunXu = shunxu;
+			usePostNanazu = PostNanazu;
+			cactbotSelf = this;
+		}
+		public void ChangeSetting(List<string> shunxu, bool PostNanazu) 
+		{
+			ShunXu = shunxu;
+			usePostNanazu = PostNanazu;
+		}
 		public void Init()
 		{
 			//if (TinyIoCContainer is not null)
