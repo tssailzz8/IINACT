@@ -12,7 +12,7 @@ namespace PostNamazu.Actions
     {
         private IntPtr ProcessChatBoxPtr;
         private IntPtr UiModulePtr;
-        private IntPtr UiModule => SigScanner.ReadIntPtr(SigScanner.ReadIntPtr(UiModulePtr));
+		private IntPtr UiModule => SigScanner.ReadIntPtr(SigScanner.ReadIntPtr(UiModulePtr));
         private IntPtr ModuleOffsetPtr;
         private int ModuleOffset;
         private IntPtr RaptureModule => UiModule + ModuleOffset;
@@ -23,7 +23,7 @@ namespace PostNamazu.Actions
 
             //Compatible with some plugins of Dalamud
             //ProcessChatBoxPtr = _scanner.ScanText("40 53 56 57 48 83 EC 70 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 ?? 48 8B 02");
-            ProcessChatBoxPtr = SigScanner.ScanText("E8 ? ? ? ? 48 8D 4C 24 ? E8 ? ? ? ? C7 07 ? ? ? ? 48 8B C7 48 8B 8C 24");
+            ProcessChatBoxPtr = SigScanner.ScanText("48 89 5C 24 ?? 57 48 83 EC 20 48 8B FA 48 8B D9 45 84 C9");
 
             UiModulePtr = SigScanner.GetStaticAddressFromSig("48 8B 05 ?? ?? ?? ?? 48 8B D9 8B 40 14 85 C0");
             ModuleOffsetPtr = SigScanner.ScanText("48 8D 8F ?? ?? ?? ?? 4C 8B C7 48 8D 54 24 ??") + 3;
@@ -97,7 +97,7 @@ namespace PostNamazu.Actions
 				cmdString.Ukn = 0;
 				var stringMem = Memory.Memory.Allocate(400);
 				Memory.Memory.Write<ChatBoxString>(stringMem, cmdString);
-				Memory.Execute(0, ProcessChatBoxPtr, RaptureModule, stringMem, IntPtr.Zero, 0);
+				Memory.Execute(ProcessChatBoxPtr, UiModule, stringMem, IntPtr.Zero, 0);
 
 
 				//Monitor.Enter(assemblyLock, ref flag);
