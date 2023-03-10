@@ -320,7 +320,9 @@ namespace RainbowMage.OverlayPlugin.EventSources {
             }
 
             try {
-                LogMessageType lineType;
+				var combatants = repository.GetCombatants();
+                var you = combatants.Where(i=>i.Name=="战士");
+				LogMessageType lineType;
                 var line = args.originalLogLine.Split('|');
 
                 if (!int.TryParse(line[0], out int lineTypeInt)) {
@@ -470,7 +472,7 @@ namespace RainbowMage.OverlayPlugin.EventSources {
             // Build a lookup table of currently known combatants
             var lookupTable = new Dictionary<uint, PluginCombatant>();
             foreach (var c in combatants) {
-                if (GetPartyType(c) != 0 /* None */) {
+                if (c.type != 0 /* None */) {
                     lookupTable[c.ID] = c;
                 }
             }

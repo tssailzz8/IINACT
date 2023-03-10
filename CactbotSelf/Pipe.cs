@@ -1,5 +1,6 @@
 ﻿using Advanced_Combat_Tracker;
 using FFXIV_ACT_Plugin.Logfile;
+using FFXIV_ACT_Plugin.Memory;
 using H.Pipes;
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,30 @@ namespace CactbotSelf
                         {
 							var type = Convert.ToInt32(array[0]);
 							var text = array[1];
-							WriteLogLineImpl(type, text);
+							if (type==11)
+							{
+								var plugin = GetPluginData();
+								var date=(DataSubscription)plugin._iocContainer.GetService(typeof(DataSubscription));
+								var partys = text.Split(new char[] {'|'});
+								if (partys.Length>0) 
+								{
+									var size = Convert.ToInt32(partys[0]);
+									var list=new List<uint>();
+									for (int i = 1; i < partys.Length; i++)
+									{
+										list.Add((uint)Convert.ToInt32(partys[i],16));
+									}
+
+									date.OnPartyListChanged(list.AsReadOnly(),size);
+								}
+								
+								
+							}
+							else
+							{
+								WriteLogLineImpl(type, text);
+							}
+							
 						}
                     }
 					catch (Exception ex)
