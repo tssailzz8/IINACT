@@ -130,5 +130,47 @@ namespace IINACT.Properties {
                 this["IsSettingsUpgradeRequired"] = value;
             }
         }
-    }
+		[global::System.Configuration.UserScopedSettingAttribute()]
+		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("False")]
+		public bool AdjustOrder
+		{
+			get
+			{
+				return ((bool)(this["AdjustOrder"]));
+			}
+			set
+			{
+				this["AdjustOrder"] = value;
+			}
+		}
+		[global::System.Configuration.UserScopedSettingAttribute()]
+		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("")]
+		public List<string> shunxu
+		{
+			get
+			{
+				return ((List<string>)(this["shunxu"]));
+			}
+			set
+			{
+				this["shunxu"] = value;
+			}
+		}
+		[global::System.Configuration.UserScopedSettingAttribute()]
+		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("False")]
+		public bool PostNamazuUse
+		{
+			get
+			{
+				return ((bool)(this["PostNamazuUse"]));
+			}
+			set
+			{
+				this["PostNamazuUse"] = value;
+			}
+		}
+	}
 }

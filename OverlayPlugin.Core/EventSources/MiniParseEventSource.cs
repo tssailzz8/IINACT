@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
 // For some reason this using is required by the github build?
@@ -490,7 +491,7 @@ namespace RainbowMage.OverlayPlugin.EventSources {
                                 worldId = c.WorldID,
                                 job = c.Job,
                                 level = c.Level,
-                                inParty = GetPartyType(c) == 1 /* Party */,
+                                inParty =true /* Party */,
                             });
                         } else {
                             missingPartyMembers.Add(id);

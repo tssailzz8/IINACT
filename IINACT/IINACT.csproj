@@ -26,13 +26,15 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.0.0" />
     <PackageReference Include="DarkModeUI" Version="3.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\c#\IINACT\CactbotSelf\CactbotSelf.csproj" />
     <ProjectReference Include="..\FetchDependencies\FetchDependencies.csproj" />
     <ProjectReference Include="..\machina\Machina\Machina.csproj" />
     <ProjectReference Include="..\OverlayPlugin.Core\OverlayPlugin.Core.csproj" />
+    <ProjectReference Include="..\PostNamazu\PostNamazu.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -86,6 +88,9 @@
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="wpcap.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
