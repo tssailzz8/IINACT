@@ -60,7 +60,7 @@ namespace PostNamazu.Common
 		/// </summary>
 		public void Stop()
 		{
-			_serverThread.Abort();
+			_serverThread.Interrupt();
 			_listener.Stop();
 		}
 		#endregion

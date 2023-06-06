@@ -1,5 +1,6 @@
 using System.Net;
 using System.Numerics;
+using System.Reflection.Metadata;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.ImGuiFileDialog;
@@ -34,6 +35,8 @@ public class ConfigWindow : Window, IDisposable
     private Configuration Configuration { get; init; }
     private FileDialogManager FileDialogManager { get; init; }
 
+    private Plugin Plugin { get; init; }
+
     public ConfigWindow(Plugin plugin) : base("IINACT Configuration")
     {
 
@@ -49,6 +52,7 @@ public class ConfigWindow : Window, IDisposable
             Configuration.shunxu = shunxu;
         }
         FileDialogManager = plugin.FileDialogManager;
+        Plugin = plugin;
     }
 
     public IPluginConfig? OverlayPluginConfig { get; set; }
@@ -215,8 +219,50 @@ public class ConfigWindow : Window, IDisposable
             }
         }
         ImGui.EndChild();
-        ;
+
+        DrawOverlaySettings();
+
     }
+
+     private void DrawOverlaySettings()
+     {
+        ImGui.Separator();
+        ImGui.BeginChild("Overlay");
+        var changed = false;
+        var EnableOverlay = Configuration.EnableOverlay;
+        if (ImGui.Checkbox($"开启Overlay功能", ref EnableOverlay))
+        {
+            Configuration.EnableOverlay = EnableOverlay;
+            changed = true;
+        }
+        if (EnableOverlay) 
+        {
+            var EnablePost = Configuration.EnablePost;
+            if (ImGui.Checkbox($"开启鲶鱼精功能", ref EnablePost))
+            {
+                Configuration.EnablePost = EnablePost;
+                changed = true;
+            }
+            var EnableCact = Configuration.EnableCact;
+            if (ImGui.Checkbox($"开启CACT功能", ref EnableCact))
+            {
+                Configuration.EnableCact = EnableCact;
+                changed = true;
+            }
+        }
+        if (ImGui.Button($"应用Overlay设置"))
+        {
+            Configuration.Save();
+            Plugin.DeInitOverlay();
+            Plugin.InitOverlayPlugin();
+        }
+
+
+     }
+
+
+
+
     private int selet=0;
     private void DrawWebSocketSettings()
     {

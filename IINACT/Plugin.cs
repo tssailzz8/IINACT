@@ -37,9 +37,9 @@ public sealed class Plugin : IDalamudPlugin
     private IpcProviders IpcProviders { get; }
 
     private FfxivActPluginWrapper FfxivActPluginWrapper { get; }
-    private RainbowMage.OverlayPlugin.PluginMain OverlayPlugin { get; set; }
-    private RainbowMage.OverlayPlugin.WebSocket.ServerController? WebSocketServer { get; set; }
-    internal string OverlayPluginStatus => OverlayPlugin.Status;
+    private static RainbowMage.OverlayPlugin.PluginMain? OverlayPlugin { get; set; }
+    private static RainbowMage.OverlayPlugin.WebSocket.ServerController? WebSocketServer { get; set; }
+    internal string? OverlayPluginStatus => OverlayPlugin?.Status;
     private PluginLogTraceListener PluginLogTraceListener { get; }
 
     private delegate void OnUpdateInputUI(IntPtr EventArgument);
@@ -73,7 +73,7 @@ public sealed class Plugin : IDalamudPlugin
         Advanced_Combat_Tracker.ActGlobals.oFormActMain.LogFilePath = Configuration.LogFilePath;
 
         FfxivActPluginWrapper = new FfxivActPluginWrapper(Configuration, DalamudApi.ClientState.ClientLanguage, DalamudApi.Chat);
-        OverlayPlugin = InitOverlayPlugin();
+        InitOverlayPlugin();
 
         IpcProviders = new IpcProviders(DalamudApi.PluginInterface);
 
@@ -162,9 +162,8 @@ public sealed class Plugin : IDalamudPlugin
     public void Dispose()
     {
         IpcProviders.Dispose();
-        
+        DeInitOverlay();
         FfxivActPluginWrapper.Dispose();
-        OverlayPlugin.DeInitPlugin();
         Trace.Listeners.Remove(PluginLogTraceListener);
         replayZonePacketDownHook.Dispose();
         WindowSystem.RemoveAllWindows();
@@ -176,13 +175,23 @@ public sealed class Plugin : IDalamudPlugin
         DalamudApi.Commands.RemoveHandler(EndEncCommandName);
         DalamudApi.Commands.RemoveHandler(ChatCommandName);
         onUpdateInputUIHook.Disable();
-        cactboSelf.DeInitPlugin();
-        //post.DeInitPlugin();
+        
     }
-    public  static CactbotSelf.CactbotSelf cactboSelf;
-    public static PostNamazu.PostNamazu post;
-    private RainbowMage.OverlayPlugin.PluginMain InitOverlayPlugin()
+
+    public void DeInitOverlay()
     {
+        OverlayPlugin?.DeInitPlugin();
+        cactboSelf?.DeInitPlugin();
+        post?.DeInitPlugin();
+    }
+
+    public static CactbotSelf.CactbotSelf? cactboSelf;
+    public static PostNamazu.PostNamazu? post;
+
+    public void InitOverlayPlugin()
+    {
+        
+
         var container = new RainbowMage.OverlayPlugin.TinyIoCContainer();
         
         var logger = new RainbowMage.OverlayPlugin.Logger();
@@ -200,8 +209,9 @@ public sealed class Plugin : IDalamudPlugin
         
         Task.Run(() =>
         {
+            if (!Configuration.EnableOverlay) { return; }
             overlayPlugin.InitPlugin(DalamudApi.PluginInterface.ConfigDirectory.FullName);
-
+            PluginLog.Log("初始化OP");
             var registry = container.Resolve<RainbowMage.OverlayPlugin.Registry>();
             MainWindow.OverlayPresets = registry.OverlayTemplates;
             WebSocketServer = container.Resolve<RainbowMage.OverlayPlugin.WebSocket.ServerController>();
@@ -209,16 +219,23 @@ public sealed class Plugin : IDalamudPlugin
             IpcProviders.Server = WebSocketServer;
             IpcProviders.OverlayIpcHandler = container.Resolve<RainbowMage.OverlayPlugin.Handlers.Ipc.IpcHandlerController>();
             ConfigWindow.OverlayPluginConfig = container.Resolve<RainbowMage.OverlayPlugin.IPluginConfig>();
-             post = new PostNamazu.PostNamazu(DalamudApi.Commands);
-            post.InitPlugin();
-            cactboSelf = new CactbotSelf.CactbotSelf(Configuration.shunxu, true);
-            cactboSelf.InitPlugin();
-            PluginLog.Log("初始化鲶鱼精");
-            setZone();
 
+            if (Configuration.EnablePost)
+            {
+                post = new PostNamazu.PostNamazu(DalamudApi.Commands);
+                post.InitPlugin();
+                PluginLog.Log("初始化鲶鱼精");
+            }
+
+            if (Configuration.EnableCact)
+            {
+                cactboSelf = new CactbotSelf.CactbotSelf(Configuration.shunxu, true);
+                cactboSelf.InitPlugin();
+                PluginLog.Log("初始化CACT");
+            }
         });
-
-        return overlayPlugin;
+        setZone();
+        OverlayPlugin = overlayPlugin;
     }
     private void setZone()
     {

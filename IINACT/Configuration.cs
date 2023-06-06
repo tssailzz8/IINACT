@@ -28,6 +28,10 @@ public class Configuration : IPluginConfiguration
 
     public bool ShowDebug { get; set; }
 
+    public bool EnableOverlay { get; set; } = true;
+    public bool EnablePost { get; set; } = true;
+    public bool EnableCact { get; set; } = true;
+
     public string LogFilePath
     {
         get => Directory.Exists(logFilePath) ? logFilePath : DefaultLogFilePath;
