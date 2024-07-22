@@ -1,11 +1,17 @@
 
 using Dalamud;
+using Dalamud.Game;
 using System.IO.Compression;
 
 namespace FetchDependencies;
 
 public class FetchDependencies
 {
+    private const string VersionUrlGlobal = "https://www.iinact.com/updater/version";
+    private const string VersionUrlChinese = "https://cninact.diemoe.net/CN解析/版本.txt";
+    private const string PluginUrlGlobal = "https://www.iinact.com/updater/download";
+    private const string PluginUrlChinese = "https://cninact.diemoe.net/CN解析/FFXIV_ACT_Plugin.dll";
+
     private Version PluginVersion { get; }
     private string DependenciesDir { get; }
     private HttpClient HttpClient { get; }
@@ -14,13 +20,14 @@ public class FetchDependencies
     {
         //DependenciesDir = Path.Combine(assemblyDir, "external_dependencies");
         DependenciesDir = assemblyDir;
+
         HttpClient = httpClient;
         switch (dalamudClientLanguage)
         {
-            case Dalamud.ClientLanguage.Japanese:
-            case Dalamud.ClientLanguage.English:
-            case Dalamud.ClientLanguage.German:
-            case Dalamud.ClientLanguage.French:
+            case ClientLanguage.Japanese:
+            case ClientLanguage.English:
+            case ClientLanguage.German:
+            case ClientLanguage.French:
                 InChina = false; ;
                 break;
             default:
@@ -125,7 +132,7 @@ public class FetchDependencies
         }
     }
 
-    private void DownloadPlugin(string path)
+    private void DownloadFile(string url, string path)
     {
         //using var cancelAfterDelay = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         //using var downloadStream = HttpClient
@@ -150,5 +157,31 @@ public class FetchDependencies
             zipFileStream.Close();
         }
        
+    }
+    private void DownloadPlugin(string path)
+    {
+        //using var cancelAfterDelay = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        //using var downloadStream = HttpClient
+        //                           .GetStreamAsync("https://www.iinact.com/updater/download",
+        //                                           cancelAfterDelay.Token).Result;
+        //using var zipFileStream = new FileStream(path, FileMode.Create);
+        //downloadStream.CopyTo(zipFileStream);
+        //zipFileStream.Close();
+        var pluginPath = Path.Combine(path, "FFXIV_ACT_Plugin.dll");
+        if (InChina)
+        {
+            using var downloadStream = HttpClient.GetStreamAsync("https://cninact.diemoe.net/CN解析/FFXIV_ACT_Plugin.dll").Result;
+            using var zipFileStream = new FileStream(pluginPath, FileMode.Create);
+            downloadStream.CopyTo(zipFileStream);
+            zipFileStream.Close();
+        }
+        else
+        {
+            using var downloadStream = HttpClient.GetStreamAsync("https://cninact.diemoe.net/global/FFXIV_ACT_Plugin.dll").Result;
+            using var zipFileStream = new FileStream(pluginPath, FileMode.Create);
+            downloadStream.CopyTo(zipFileStream);
+            zipFileStream.Close();
+        }
+
     }
 }

@@ -70,7 +70,7 @@ public sealed class Plugin : IDalamudPlugin
         PluginLogTraceListener = new PluginLogTraceListener();
         Trace.Listeners.Add(PluginLogTraceListener);
 
-        Advanced_Combat_Tracker.ActGlobals.oFormActMain = new Advanced_Combat_Tracker.FormActMain();
+        Advanced_Combat_Tracker.ActGlobals.oFormActMain = new Advanced_Combat_Tracker.FormActMain(Log);
 
         Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Configuration.Initialize(DalamudApi.PluginInterface);
@@ -165,6 +165,8 @@ public sealed class Plugin : IDalamudPlugin
     private ConfigWindow ConfigWindow { get; }
     public void Dispose()
     {
+        ClientState.EnterPvP -= EnterPvP;
+        ClientState.LeavePvP -= LeavePvP;
         IpcProviders.Dispose();
         
         FfxivActPluginWrapper.Dispose();
@@ -189,7 +191,7 @@ public sealed class Plugin : IDalamudPlugin
     {
         var container = new RainbowMage.OverlayPlugin.TinyIoCContainer();
         
-        var logger = new RainbowMage.OverlayPlugin.Logger();
+        var logger = new RainbowMage.OverlayPlugin.Logger(Log);
         container.Register(logger);
         container.Register<RainbowMage.OverlayPlugin.ILogger>(logger);
 
@@ -278,6 +280,14 @@ public sealed class Plugin : IDalamudPlugin
                 Configuration.WriteLogFile = false;
                 Configuration.Save();
                 break;
+            case "log pvp start":
+                Configuration.DisablePvp = false;
+                Configuration.Save();
+                break;
+            case "log pvp stop":
+                Configuration.DisablePvp = true;
+                Configuration.Save();
+                break;
             default:
                 MainWindow.IsOpen = true;
                 break;
@@ -312,5 +322,18 @@ public sealed class Plugin : IDalamudPlugin
     {
         ConfigWindow.IsOpen = true;
 
+    }
+
+    private void EnterPvP()
+    {
+        if (Configuration is not { DisablePvp: true, DisableWritingPvpLogFile: false })
+            return;
+
+        Configuration.DisableWritingPvpLogFile = true;
+    }
+
+    private void LeavePvP()
+    {
+        Configuration.DisableWritingPvpLogFile = false;
     }
 }

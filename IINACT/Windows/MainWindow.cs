@@ -10,6 +10,8 @@ using RainbowMage.OverlayPlugin;
 using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
+using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility.Raii;
 
 namespace IINACT.Windows;
 
@@ -65,8 +67,14 @@ public class MainWindow : Window, IDisposable
         ImGui.TextColored(ImGuiColors.DalamudGrey, "Overlay URI generator:");
 
         var comboWidth = ImGui.GetWindowWidth() * 0.8f;
-
-        var selectedOverlayName = OverlayNames?[selectedOverlayIndex] ?? "";
+        
+        var selectedIndexOverlayName = OverlayNames?[selectedOverlayIndex] ?? "";
+        var selectedOverlayName = Plugin.Configuration.SelectedOverlay ?? selectedIndexOverlayName;
+        if (selectedOverlayName != selectedIndexOverlayName)
+            for (var i = 0; i < OverlayNames?.Length; i++)
+                if (OverlayNames?[i] == selectedOverlayName) 
+                    selectedOverlayIndex = i;
+        
         ImGui.SetNextItemWidth(comboWidth);
         if (ImGui.BeginCombo("Overlay", selectedOverlayName))
         {
@@ -74,7 +82,11 @@ public class MainWindow : Window, IDisposable
             {
                 var currentOverlayName = OverlayNames?[i] ?? "";
                 if (ImGui.Selectable(currentOverlayName, currentOverlayName == selectedOverlayName))
+                {
                     selectedOverlayIndex = i;
+                    Plugin.Configuration.SelectedOverlay = currentOverlayName;
+                    Plugin.Configuration.Save();
+                }
             }
 
             ImGui.EndCombo();
@@ -170,6 +182,15 @@ public class MainWindow : Window, IDisposable
         if (ImGui.Checkbox("Write out network log file", ref writeLogFile))
         {
             Plugin.Configuration.WriteLogFile = writeLogFile;
+            Plugin.Configuration.Save();
+        }
+
+        var disablePvp = Plugin.Configuration.DisablePvp;
+        if (ImGui.Checkbox("Disable writing out network log file in PvP", ref disablePvp))
+        {
+            if (Plugin.ClientState.IsPvP && disablePvp) Plugin.Configuration.DisableWritingPvpLogFile = true;
+
+            Plugin.Configuration.DisablePvp = disablePvp;
             Plugin.Configuration.Save();
         }
 

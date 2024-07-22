@@ -6,7 +6,7 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Advanced_Combat_Tracker.Resources;
-using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 using FFXIV_ACT_Plugin.Logfile;
 
 namespace Advanced_Combat_Tracker;
@@ -14,6 +14,7 @@ namespace Advanced_Combat_Tracker;
 public partial class FormActMain : Form, ISynchronizeInvoke
 {
     public delegate DateTime DateTimeLogParser(string logLine);
+    public IPluginLog PluginLog { get; }
 
     private readonly ConcurrentQueue<MasterSwing> afterActionsQueue = new();
     private Thread afterActionQueueThread;
@@ -27,8 +28,9 @@ public partial class FormActMain : Form, ISynchronizeInvoke
 
     internal volatile bool refreshTree;
 
-    public FormActMain()
+    public FormActMain(IPluginLog pluginLog)
     {
+        PluginLog = pluginLog;
         InitializeComponent();
         AppDataFolder = new DirectoryInfo(".");
         ActGlobals.ActLocalization.Init();
@@ -40,6 +42,7 @@ public partial class FormActMain : Form, ISynchronizeInvoke
 
     public bool ReadThreadLock { get; set; }
     public bool WriteLogFile { get; set; } = true;
+    public bool DisableWritingPvpLogFile { get; set; }
     public int GlobalTimeSorter { get; set; }
     public List<ZoneData> ZoneList { get; set; } = new();
     public string LogFileFilter { get; set; } = "notact*.txt";
@@ -122,7 +125,7 @@ public partial class FormActMain : Form, ISynchronizeInvoke
 
 
     public void WriteExceptionLog(Exception ex, string MoreInfo) => 
-        PluginLog.Error(ex, MoreInfo);
+        PluginLog.Error(ex, $"[NotAct] {MoreInfo}");
 
     public void OpenLog(bool GetCurrentZone, bool GetCharNameFromFile) { }
     public static IntPtr delta0 = IntPtr.Zero;
@@ -130,7 +133,7 @@ public partial class FormActMain : Form, ISynchronizeInvoke
     public static IntPtr deltaC = IntPtr.Zero;
     public void ParseRawLogLine(string logLine)
     {
-        if (WriteLogFile)
+        if (WriteLogFile && !DisableWritingPvpLogFile)
             LogQueue.Enqueue(logLine);
         if (BeforeLogLineRead == null || GetDateTimeFromLog == null)
             return;
@@ -337,7 +340,7 @@ public partial class FormActMain : Form, ISynchronizeInvoke
             using var outputWriter = new StreamWriter(stream);
             while (true)
             {
-                if (!WriteLogFile)
+                if (!WriteLogFile || DisableWritingPvpLogFile)
                 {
                     Thread.Sleep(2000);
                     continue;

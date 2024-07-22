@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Machina.FFXIV.Headers.Opcodes;
 
 namespace RainbowMage.OverlayPlugin
 {
@@ -77,7 +78,7 @@ namespace RainbowMage.OverlayPlugin
             logger = container.Resolve<ILogger>();
         }
 
-        private FFXIV_ACT_Plugin.FFXIV_ACT_Plugin GetPluginData()
+        internal static FFXIV_ACT_Plugin.FFXIV_ACT_Plugin GetPluginData()
         {
             return ActGlobals.oFormActMain.FfxivPlugin;
         }
@@ -151,6 +152,26 @@ namespace RainbowMage.OverlayPlugin
         private bool IsFFXIVPluginPresentImpl()
         {
             return GetRepository() != null;
+        }
+        
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private uint? GetCurrentTerritoryIDImpl()
+        {
+            return GetRepository()?.GetCurrentTerritoryID();
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public uint? GetCurrentTerritoryID()
+        {
+            try
+            {
+                return GetCurrentTerritoryIDImpl();
+            }
+            catch (FileNotFoundException)
+            {
+                // The FFXIV plugin isn't loaded
+                return null;
+            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -311,12 +332,54 @@ namespace RainbowMage.OverlayPlugin
                     return null;
             }
         }
+        
+        public static Dictionary<GameRegion, Dictionary<string, ushort>> GetMachinaOpcodes() =>
+            (Dictionary<GameRegion, Dictionary<string, ushort>>)typeof(OpcodeManager).GetField(
+                "_opcodes", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(OpcodeManager.Instance);
 
         public GameRegion GetMachinaRegion() =>
             Machina.FFXIV.Headers.Opcodes.OpcodeManager.Instance.GameRegion;
 
         public DateTime EpochToDateTime(long epoch) =>
             Machina.Infrastructure.ConversionUtility.EpochToDateTime(epoch).ToLocalTime();
+        
+        /**
+         * Convert a coordinate expressed as a uint16 to a float.
+         *
+         * See https://github.com/ravahn/FFXIV_ACT_Plugin/issues/298
+         */
+        public static float ConvertUInt16Coordinate(ushort value)
+        {
+            return (value - 0x7FFF) / 32.767f;
+        }
+
+        /**
+         * Convert a packet heading to an in-game headiung.
+         *
+         * When a heading is sent in certain packets, the heading is expressed as a uint16, where
+         * 0=north and each increment is 1/65536 of a turn in the CCW direction.
+         *
+         * See https://github.com/ravahn/FFXIV_ACT_Plugin/issues/298
+         */
+        public static double ConvertHeading(ushort heading)
+        {
+            return heading
+                   // Normalize to turns
+                   / 65536.0
+                   // Normalize to radians
+                   * 2 * Math.PI
+                   // Flip from 0=north to 0=south like the game uses
+                   - Math.PI;
+        }
+
+        /**
+         * Reinterpret a float as a UInt16. Some fields in Machina, such as Server_ActorCast.Rotation, are
+         * marked as floats when they really should be UInt16.
+         */
+        public static ushort InterpretFloatAsUInt16(float value)
+        {
+            return BitConverter.ToUInt16(BitConverter.GetBytes(value), 0);
+        }
 
         private ILogOutput _logOutput;
 
@@ -377,6 +440,13 @@ namespace RainbowMage.OverlayPlugin
                     if (process != null) handler(process);
                 }
             }
+        }
+        
+        public void RegisterZoneChangeDelegate(Action<uint, string> handler)
+        {
+            var sub = GetSubscription();
+            if (sub != null)
+                sub.ZoneChanged += new ZoneChangedDelegate(handler);
         }
         
         public DateTime GetServerTimestamp()

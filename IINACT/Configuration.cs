@@ -14,7 +14,7 @@ public class Configuration : IPluginConfiguration
     public bool UseEdeg;
 
     [JsonIgnore]
-    private DalamudPluginInterface? PluginInterface { get; set; }
+    private IDalamudPluginInterface? PluginInterface { get; set; }
 
     public int ParseFilterMode { get; set; }
 
@@ -22,6 +22,8 @@ public class Configuration : IPluginConfiguration
 
     public bool DisableCombinePets { get; set; }
 
+    public bool DisablePvp { get; set; }
+    
     public bool SimulateIndividualDoTCrits { get; set; }
 
     public bool ShowRealDoTTicks { get; set; }
@@ -40,9 +42,17 @@ public class Configuration : IPluginConfiguration
         set => Advanced_Combat_Tracker.ActGlobals.oFormActMain.WriteLogFile = value;
     }
 
-    public int Version { get; set; } = 1;
+    public bool DisableWritingPvpLogFile
+    {
+        get => Advanced_Combat_Tracker.ActGlobals.oFormActMain.DisableWritingPvpLogFile;
+        set => Advanced_Combat_Tracker.ActGlobals.oFormActMain.DisableWritingPvpLogFile = value;
+    }
 
-    public void Initialize(DalamudPluginInterface pluginInterface)
+    public int Version { get; set; } = 1;
+    
+    public string? SelectedOverlay { get; set; }
+
+    public void Initialize(IDalamudPluginInterface pluginInterface)
     {
         PluginInterface = pluginInterface;
     }

@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -40,7 +41,6 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
         internal IntPtr player_ptr_addr_ = IntPtr.Zero;
         internal IntPtr job_data_outer_addr_ = IntPtr.Zero;
         internal IntPtr in_combat_addr_ = IntPtr.Zero;
-        internal IntPtr bait_addr_ = IntPtr.Zero;
 
         // Values found in the EntityStruct's type field.
         public enum EntityType : byte
@@ -100,6 +100,8 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             DNC = 38,
             RPR = 39,
             SGE = 40,
+            VPR = 41,
+            PCT = 42,
         };
 
         static internal bool IsGatherer(EntityJob job)
@@ -149,7 +151,6 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             public short level = 0;
             public string debug_job;
             public int shield_value = 0;
-            public int bait = 0;
 
             public override bool Equals(object obj)
             {
@@ -172,8 +173,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
                        job == o.job &&
                        level == o.level &&
                        debug_job == o.debug_job &&
-                       shield_value == o.shield_value &&
-                       bait == o.bait;
+                       shield_value == o.shield_value;
             }
 
             public override int GetHashCode()
@@ -199,7 +199,6 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
                 hash = hash * 31 + level.GetHashCode();
                 hash = hash * 31 + shield_value.GetHashCode();
                 hash = hash * 31 + debug_job.GetHashCode();
-                hash = hash * 31 + bait.GetHashCode();
                 return hash;
             }
         };
@@ -263,20 +262,16 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             return active_process_id == process_.Id;
         }
 
-        internal int GetBait()
-        {
-            var jorts = Read16(bait_addr_, 1);
-            return jorts[0];
-        }
-
         public unsafe abstract EntityData GetEntityDataFromByteArray(byte[] source);
 
         public bool GetInGameCombat()
         {
             if (!HasProcess() || in_combat_addr_ == IntPtr.Zero)
                 return false;
-            var bytes = Read8(in_combat_addr_, 1);
-            return bytes[0] != 0;
+            var bytes = Read8Pooled(in_combat_addr_, 1);
+            var ret = bytes[0] != 0;
+            ArrayPool<byte>.Shared.Return(bytes);
+            return ret;
         }
 
         internal byte[] GetRawJobSpecificDataBytes()
@@ -298,19 +293,37 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
         public abstract JObject GetJobSpecificData(EntityJob job);
         internal abstract EntityData GetEntityData(IntPtr entity_ptr);
         public abstract EntityData GetSelfData();
-        
-        [LibraryImport("kernel32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static partial bool IsBadReadPtr(IntPtr lp, ulong ucb);
+
+        [SuppressGCTransition]
+        [LibraryImport("SafeMemoryReader.dll")]
+        private static partial int ReadMemory(nint dest, nint src, int size);
 
         /// Reads |count| bytes at |addr| in the |process_|. Returns null on error.
-        internal byte[] Read8(IntPtr addr, int count)
+        internal unsafe byte[] Read8(IntPtr addr, int count)
         {
             var data = new byte[count];
-            if (!IsBadReadPtr(addr, (ulong)count))
-                Marshal.Copy(addr, data, 0, count);
-            return data;
+
+            fixed (byte* dataPtr = data)
+            {
+                var result = ReadMemory((nint)dataPtr, addr, count);
+                if (result != 0) return null;
             }
+
+            return data;
+        }
+        
+        internal unsafe byte[] Read8Pooled(IntPtr addr, int count)
+        {
+            var data = ArrayPool<byte>.Shared.Rent(count);
+
+            fixed (byte* dataPtr = data)
+            {
+                var result = ReadMemory((nint)dataPtr, addr, count);
+                if (result != 0) return null;
+            }
+
+            return data;
+        }
 
         /// Reads |addr| in the |process_| and returns it as a 16bit ints. Returns null on error.
         internal Int16[] Read16(IntPtr addr, int count)
@@ -375,7 +388,12 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
         /// Reads |addr| in the |process_| and returns it as a 64bit pointer. Returns 0 on error.
         internal unsafe IntPtr ReadIntPtr(IntPtr addr)
         {
-            return IsBadReadPtr(addr, 8) ? 0 : new IntPtr(*(long*)addr);
+            var buffer = Read8Pooled(addr, 8);
+            if (buffer == null)
+                return IntPtr.Zero;
+            var ret = new IntPtr(BitConverter.ToInt64(buffer, 0));
+            ArrayPool<byte>.Shared.Return(buffer);
+            return ret;
         }
 
         /// <summary>
