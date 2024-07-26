@@ -138,7 +138,7 @@ namespace PostNamazu
 			string errorMessage = $"无法在{_httpServer.Port}端口启动监听\n{ex.Message}";
 
 
-			MessageBox.Show(errorMessage);
+			//MessageBox.Show(errorMessage);
 		}
 
 

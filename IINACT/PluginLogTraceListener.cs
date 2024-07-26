@@ -13,12 +13,12 @@ public class PluginLogTraceListener : TraceListener
         if (message is null) return;
         
         if (category?.Equals("ffxiv_act_plugin", StringComparison.OrdinalIgnoreCase) ?? false)
-            Plugin.Log.Information($"[FFXIV_ACT_PLUGIN] {message}");
+           DalamudApi.PluginLog.Information($"[FFXIV_ACT_PLUGIN] {message}");
 
         if (category?.Equals("machina", StringComparison.OrdinalIgnoreCase) ?? false)
-            Plugin.Log.Information($"[MACHINA] {message}");
+            DalamudApi.PluginLog.Information($"[MACHINA] {message}");
         
         if (category?.Equals("debug-machina", StringComparison.OrdinalIgnoreCase) ?? false)
-            Plugin.Log.Debug($"[MACHINA] {message}");
+            DalamudApi.PluginLog.Debug($"[MACHINA] {message}");
     }
 }

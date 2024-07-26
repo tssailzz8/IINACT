@@ -136,6 +136,14 @@ namespace RainbowMage.OverlayPlugin.EventSources
                         combatants
                     });
                 });
+                try
+                {
+                    InitFFXIVIntegration();
+                }
+                catch (FileNotFoundException)
+                {
+                    // The FFXIV plugin hasn't been loaded.
+                }
 
                 container.Resolve<NetworkParser>().OnOnlineStatusChanged += (o, e) =>
                 {
@@ -152,6 +160,118 @@ namespace RainbowMage.OverlayPlugin.EventSources
 
                 Task.Run(PollJobGauge, cancellationToken.Token);
             }
+        }
+        private void InitFFXIVIntegration()
+        {
+            repository.RegisterPartyChangeDelegate((partyList, partySize) =>
+                                                       DispatchPartyChangeEvent(partyList, partySize));
+          
+        }
+        private void DispatchPartyChangeEvent(ReadOnlyCollection<uint> partyList, int partySize)
+        {
+            var party = cachedPartyList;
+
+            
+            var combatants = repository.GetCombatants();
+            if (combatants == null)
+                return;
+
+            // This is a bit of a hack.  The goal is to return a set of party
+            // and alliance players, along with their jobs, ids, and names.
+            //
+            // |partySize| is only the size of your party, but the list of ids
+            // contains ids from both party and alliance members.
+            //
+            // Additionally, there is a race where |combatants| is not updated
+            // by the time this function is called.  However, this only seems
+            // to happen in the case of disconnects and never when zoning in.
+            // As a workaround, we use data retrieved from the NetworkAdd/RemoveCombatant
+            // lines and keep track of all combatants which are missing from
+            // the memory combatant list (the network lines are missing the
+            // party status). Once per second (in Update()) we check if all
+            // missing members have appeared and once they do, we dispatch
+            // a PartyChangedEvent. This should result in immediate events
+            // whenever the party changes and a second delayed event for each
+            // change that updates the inParty field.
+            //
+            // Alternatives:
+            // * poll GetCombatants until all party members exist (infinitely?)
+            // * find better memory location of party list
+            // * make this function only return the values from the delegate
+            // * make callers handle this via calling GetCombatants explicitly
+
+            // Build a lookup table of currently known combatants
+            var lookupTable = new Dictionary<uint, PluginCombatant>();
+            foreach (var c in combatants)
+            {
+#if DEBUG
+                if (c.type != 0 /* None */)
+                {
+                    lookupTable[c.ID] = c;
+                }
+
+#else
+                if (GetPartyType(c) != 0 /* None */)
+                {
+                    lookupTable[c.ID] = c;
+                }
+#endif
+            }
+
+            // Accumulate party members from cached info.  If they don't exist,
+            // still send *something*, since it's better than nothing.
+            List<PartyMember> result = new List<PartyMember>(24);
+       
+                lock (partyList)
+                {
+
+                if (partyList.Count()==8)
+                {
+                    var a = 1;
+                }
+                foreach (var id in partyList)
+                    {
+                        PluginCombatant c;
+                        if (lookupTable.TryGetValue(id, out c))
+                        {
+#if DEBUG
+                            result.Add(new PartyMember
+                            {
+                                id = $"{id:X}",
+                                name = c.Name,
+                                worldId = c.WorldID,
+                                job = c.Job,
+                                level = c.Level,
+                                inParty = c.type == 1 /* Party */,
+                            });
+#else
+                            result.Add(new PartyMember
+                            {
+                                id = $"{id:X}",
+                                name = c.Name,
+                                worldId = c.WorldID,
+                                job = c.Job,
+                                level = c.Level,
+                                inParty = GetPartyType(c) == 1 /* Party */,
+                            });
+#endif
+                        }
+                        else
+                        {
+                           
+                        }
+                    }
+
+              
+                }
+
+            Log(LogLevel.Debug, "party list: {0}", JObject.FromObject(new { party = result }).ToString());
+
+            DispatchAndCacheEvent(JObject.FromObject(new
+            {
+                type = PartyChangedEvent,
+                party = result,
+            }));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -341,8 +461,10 @@ namespace RainbowMage.OverlayPlugin.EventSources
                 remainingAlliances.RemoveAt(2);
                 Log(LogLevel.Warning, $"Could not detect player alliance, value {cachedPartyList.currentPartyFlags:X8}");
             }
-
+#if DEBUG
+#else
             BuildPartyMemberResults(result, cachedPartyList.partyMembers, currentAlliance, true);
+#endif
             BuildPartyMemberResults(result, cachedPartyList.alliance1Members, remainingAlliances[0], false);
             BuildPartyMemberResults(result, cachedPartyList.alliance2Members, remainingAlliances[1], false);
             BuildPartyMemberResults(result, cachedPartyList.alliance3Members, remainingAlliances[2], false);

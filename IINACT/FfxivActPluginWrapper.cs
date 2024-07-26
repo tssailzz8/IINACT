@@ -73,17 +73,13 @@ public partial class FfxivActPluginWrapper : IDisposable
 
         ffxivActPlugin = new FFXIV_ACT_Plugin.FFXIV_ACT_Plugin();
         ffxivActPlugin.ConfigureIOC();
-        switch (dalamudClientLanguage)
+        if (dalamudClientLanguage.ToString() == "ChineseSimplified")
         {
-            case Dalamud.ClientLanguage.Japanese:
-            case Dalamud.ClientLanguage.English:
-            case Dalamud.ClientLanguage.German:
-            case Dalamud.ClientLanguage.French:
-                OpcodeManager.Instance.SetRegion(GameRegion.Global);
-                break;
-            default:
-                OpcodeManager.Instance.SetRegion(GameRegion.Chinese);
-                break;
+            OpcodeManager.Instance.SetRegion(GameRegion.Chinese);
+        }
+        else
+        {
+            OpcodeManager.Instance.SetRegion(GameRegion.Global);
         }
 
         iocContainer = ffxivActPlugin._iocContainer;
@@ -155,10 +151,10 @@ public partial class FfxivActPluginWrapper : IDisposable
     private Language ClientLanguage =>
         dalamudClientLanguage switch
         {
-            Dalamud.ClientLanguage.Japanese => Language.Japanese,
-            Dalamud.ClientLanguage.English => Language.English,
-            Dalamud.ClientLanguage.German => Language.German,
-            Dalamud.ClientLanguage.French => Language.French,
+            Dalamud.Game.ClientLanguage.Japanese => Language.Japanese,
+            Dalamud.Game.ClientLanguage.English => Language.English,
+            Dalamud.Game.ClientLanguage.German => Language.German,
+            Dalamud.Game.ClientLanguage.French => Language.French,
             _ => Language.Chinese
         };
 
@@ -267,7 +263,7 @@ public partial class FfxivActPluginWrapper : IDisposable
 
     private static void OnProcessException(DateTime timestamp, string text)
     {
-        Plugin.Log.Debug($"[FFXIV_ACT_Plugin] {text}");
+        DalamudApi.PluginLog.Debug($"[FFXIV_ACT_Plugin] {text}");
     }
 
     [SuppressGCTransition]
@@ -285,20 +281,20 @@ public partial class FfxivActPluginWrapper : IDisposable
         throw new AccessViolationException($"Attempted to read invalid memory location {address}.");
     }
 
-    private unsafe void MobDataRefresh(IFramework _)
+    private bool MobDataRefresh()
     {
         if (settingsMediator.DataCollectionSettings == null)
             return false;
-        
+
         var mobArrayAddress = mobArrayProcessor._readMobArray.Read64();
         var mobArray = mobArrayProcessor._internalMmobArray;
-        
+
         if (mobArrayAddress == 0)
         {
             Array.Clear(mobArray);
             return false;
         }
-        
+
         var mobArrayAddressValue = TryReadAddress(mobArrayAddress);
 
         if (mobArrayAddressValue == 0)
@@ -312,7 +308,7 @@ public partial class FfxivActPluginWrapper : IDisposable
             Array.Clear(mobArray);
             return false;
         }
-        
+
         mobArray[0] = mobDataOffsets[0];
 
         for (var i = 1; i < mobArraySize; i++)
@@ -366,7 +362,7 @@ public partial class FfxivActPluginWrapper : IDisposable
             }
             catch (Exception ex)
             {
-                Plugin.Log.Error(ex, "[FFXIV_ACT_Plugin] ScanMemory failure");
+                DalamudApi.PluginLog.Error(ex, "[FFXIV_ACT_Plugin] ScanMemory failure");
             }
         }
     }

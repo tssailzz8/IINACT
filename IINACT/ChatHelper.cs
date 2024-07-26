@@ -79,7 +79,7 @@ public static class ChatHelper
 	public unsafe static void SendMessage(string message)
 	{
         var framework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance();
-        var uiModule = framework->GetUiModule();
+        var uiModule = framework->GetUIModule();
 
         using var payload = new ChatPayload(message);
         var payloadPtr = Marshal.AllocHGlobal(400);

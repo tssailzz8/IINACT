@@ -50,8 +50,8 @@ namespace CactbotSelf
 		}
 		private FFXIV_ACT_Plugin.FFXIV_ACT_Plugin GetPluginData()
 		{
-			return ActGlobals.oFormActMain.FfxivPlugin;
-		}
+            return ActGlobals.oFormActMain.FfxivPlugin;
+        }
 		private  void RestartPipeClient()
 		{
 			try

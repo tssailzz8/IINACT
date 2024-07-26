@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -60,7 +60,7 @@
 		<Private>False</Private>
     </Reference>
     <Reference Include="Iced">
-      <HintPath>E:\Dalamud\XIVLauncher\addon\Hooks\dev\Iced.dll</HintPath>
+      <HintPath>$(appdata)\XIVLauncher\addon\Hooks\dev\Iced.dll</HintPath>
         <Private>False</Private>
     </Reference>
   </ItemGroup>

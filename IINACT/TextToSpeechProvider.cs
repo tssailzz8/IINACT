@@ -26,7 +26,7 @@ internal class TextToSpeechProvider
         }
         catch (Exception ex)
         {
-            Plugin.Log.Warning(ex, "Failed to initialize SAPI TTS engine");
+            DalamudApi.PluginLog.Warning(ex, "Failed to initialize SAPI TTS engine");
         }
 
         Advanced_Combat_Tracker.ActGlobals.oFormActMain.TextToSpeech += Speak;
@@ -61,7 +61,7 @@ internal class TextToSpeechProvider
             }
             catch (Exception ex)
             {
-                PluginLog.Error(ex, $"TTS failed to play back {message}");
+                DalamudApi.LogError($"TTS failed to play back {message}",ex);
                 return;
             }
         }
@@ -82,7 +82,7 @@ internal class TextToSpeechProvider
             }
             catch (Exception ex)
             {
-                Plugin.Log.Error(ex, $"TTS failed to play back {message}");
+                DalamudApi.PluginLog.Error($"TTS failed to play back {message}",ex);
             }
         }
 

@@ -49,17 +49,17 @@ public sealed class Plugin : IDalamudPlugin
     private static readonly Queue<string> ChatQueue = new();
     public DateTime NextClick;
     private delegate long ReplayZonePacketDownDelegate(long a, long targetId, long dataPtr);
-	private readonly Hook<ReplayZonePacketDownDelegate> replayZonePacketDownHook;
-    private delegate void UpdateParty(IntPtr header, IntPtr data, byte a3);
-    private Hook<UpdateParty> UpdatePartyHook;
-    public Plugin(DalamudPluginInterface pluginInterface)
+
+
+    public Plugin(IDalamudPluginInterface pluginInterface)
     {
         DalamudApi.Initialize(this, pluginInterface);
         PluginLogTraceListener = new PluginLogTraceListener();
         Trace.Listeners.Add(PluginLogTraceListener);
         
         FileDialogManager = new FileDialogManager();
-        Machina.FFXIV.Dalamud.DalamudClient.GameNetwork = DalamudApi.Network;
+
+        Machina.FFXIV.Dalamud.DalamudClient.GameNetwork = DalamudApi.GameNetwork;
 
         HttpClient = new HttpClient();
         var fetchDeps = new FetchDependencies.FetchDependencies(
@@ -70,7 +70,7 @@ public sealed class Plugin : IDalamudPlugin
         PluginLogTraceListener = new PluginLogTraceListener();
         Trace.Listeners.Add(PluginLogTraceListener);
 
-        Advanced_Combat_Tracker.ActGlobals.oFormActMain = new Advanced_Combat_Tracker.FormActMain(Log);
+        Advanced_Combat_Tracker.ActGlobals.oFormActMain = new Advanced_Combat_Tracker.FormActMain(DalamudApi.PluginLog);
 
         Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Configuration.Initialize(DalamudApi.PluginInterface);
@@ -78,7 +78,7 @@ public sealed class Plugin : IDalamudPlugin
         this.TextToSpeechProvider = new TextToSpeechProvider(Configuration);
         Advanced_Combat_Tracker.ActGlobals.oFormActMain.LogFilePath = Configuration.LogFilePath;
 
-        FfxivActPluginWrapper = new FfxivActPluginWrapper(Configuration, DalamudApi.GameData.Language, DalamudApi.Chat, DalamudApi.Framework, DalamudApi.Conditions);
+        FfxivActPluginWrapper = new FfxivActPluginWrapper(Configuration, DalamudApi.GameData.Language, DalamudApi.Chat, DalamudApi.Framework, DalamudApi.Condition);
         OverlayPlugin = InitOverlayPlugin();
 
         IpcProviders = new IpcProviders(DalamudApi.PluginInterface);
@@ -88,61 +88,37 @@ public sealed class Plugin : IDalamudPlugin
         WindowSystem.AddWindow(MainWindow);
         DalamudApi.Framework.Update += Updata;
         onUpdateInputUIHook= DalamudApi.Hook.HookFromAddress<OnUpdateInputUI>(
-                    DalamudApi.SigScanner.ScanText("4C 8B DC 53 56 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 83 B9"), OnUpdateInputUIDo);
+                    DalamudApi.SigScanner.ScanText("4C 8B DC 56 41 57 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 83 B9 ?? ?? ?? ?? ?? 4C 8B FA"), OnUpdateInputUIDo);
         onUpdateInputUIHook.Enable();
-        this.replayZonePacketDownHook = DalamudApi.Hook.HookFromAddress<ReplayZonePacketDownDelegate>(DalamudApi.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 BB ?? ?? ?? ?? ?? 77 93"), ReplayZonePacketDownDetour);
-        replayZonePacketDownHook.Enable();
-        UpdatePartyHook = DalamudApi.Hook.HookFromAddress<UpdateParty>(DalamudApi.SigScanner.ScanText("48 89 5C 24 ?? 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ??"), UpdatePartyDetor);
-        UpdatePartyHook.Enable();
+
+
         this.NextClick = DateTime.Now;
-        DalamudApi.Commands.AddHandler(MainWindowCommandName, new CommandInfo(OnCommand)
+        DalamudApi.CommandManager.AddHandler(MainWindowCommandName, new CommandInfo(OnCommand)
         {
             HelpMessage = "Displays the IINACT main window"
         });
         //DalamudApi.Commands.ProcessCommand(MainWindowCommandName);
-        DalamudApi.Commands.AddHandler(EndEncCommandName, new CommandInfo(EndEncounter)
+        DalamudApi.CommandManager.AddHandler(EndEncCommandName, new CommandInfo(EndEncounter)
         {
             HelpMessage = "Ends the current encounter IINACT is parsing"
         });
-        DalamudApi.Commands.AddHandler(ChatCommandName, new CommandInfo(ChatDo)
+        DalamudApi.CommandManager.AddHandler(ChatCommandName, new CommandInfo(ChatDo)
         {
             HelpMessage = "chat"
         });
         DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
         DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
-        FormActMain.delta0 = DalamudApi.SigScanner.GetStaticAddressFromSig("89 1D ?? ?? ?? ?? 40 84 FF");
-        FormActMain.delta4 = DalamudApi.SigScanner.GetStaticAddressFromSig("89 15 ?? ?? ?? ?? EB 1E");
-        FormActMain.deltaC = DalamudApi.SigScanner.GetStaticAddressFromSig("03 05 ?? ?? ?? ?? 03 C3");
+        FormActMain.delta0 = DalamudApi.SigScanner.GetStaticAddressFromSig("89 3D ?? ?? ?? ?? 84 DB");
+        FormActMain.delta4 = DalamudApi.SigScanner.GetStaticAddressFromSig("44 8B 1D ?? ?? ?? ?? 43 8D 0C 10");
+        FormActMain.deltaC = DalamudApi.SigScanner.GetStaticAddressFromSig("42 03 8C 93 ?? ?? ?? ??");
     }
     private FFXIV_ACT_Plugin.FFXIV_ACT_Plugin GetPluginData()
     {
         return ActGlobals.oFormActMain.FfxivPlugin;
     }
     private int partyLength = 0;
-    private void UpdatePartyDetor(IntPtr header, IntPtr dataptr, byte a3)
-    {
-        PluginLog.Debug($"PartyLength = {partyLength}");
-        PluginLog.Debug($"PartyUpdate");
-        //partyLength = Marshal.ReadByte(dataptr, (440 * 8) + 17);
-        //var lists = new List<uint>();
-        //for (int i = 32 + 8; i < 440 * partyLength; i += 440)
-        //{
-        //    lists.Add((uint)Marshal.ReadInt32(dataptr, i));
-        //}
-        //var plugin = GetPluginData();
-        //var date = (DataSubscription)plugin._iocContainer.GetService(typeof(DataSubscription));
-        //date.OnPartyListChanged(lists.AsReadOnly(), partyLength);
-        UpdatePartyHook.Original(header, dataptr, a3);
-    
-    }
-    private long ReplayZonePacketDownDetour(long a, long b, long c)
-    {
-        var opcode = (ushort)Marshal.ReadInt16((nint)b);
-        var dataPtr = (IntPtr)c;
-        SafeMemory.Read<UInt32>((IntPtr)b + 8, out var sourceID);
-        //FFXIVNetworkMonitor.Replay(dataPtr,opcode, sourceID);
-        return replayZonePacketDownHook.Original(a, b, c);
-    }
+
+
 
     private void OnUpdateInputUIDo(IntPtr EventArgument)
     {
@@ -165,22 +141,21 @@ public sealed class Plugin : IDalamudPlugin
     private ConfigWindow ConfigWindow { get; }
     public void Dispose()
     {
-        ClientState.EnterPvP -= EnterPvP;
-        ClientState.LeavePvP -= LeavePvP;
+        DalamudApi.ClientState.EnterPvP -= EnterPvP;
+        DalamudApi.ClientState.LeavePvP -= LeavePvP;
         IpcProviders.Dispose();
         
         FfxivActPluginWrapper.Dispose();
         OverlayPlugin.DeInitPlugin();
         Trace.Listeners.Remove(PluginLogTraceListener);
-        replayZonePacketDownHook.Dispose();
         WindowSystem.RemoveAllWindows();
-        UpdatePartyHook.Dispose();
+
         ConfigWindow.Dispose();
         MainWindow.Dispose();
         DalamudApi.Framework.Update -= Updata;
-        DalamudApi.Commands.RemoveHandler(MainWindowCommandName);
-        DalamudApi.Commands.RemoveHandler(EndEncCommandName);
-        DalamudApi.Commands.RemoveHandler(ChatCommandName);
+        DalamudApi.CommandManager.RemoveHandler(MainWindowCommandName);
+        DalamudApi.CommandManager.RemoveHandler(EndEncCommandName);
+        DalamudApi.CommandManager.RemoveHandler(ChatCommandName);
         onUpdateInputUIHook.Disable();
         cactboSelf.DeInitPlugin();
         //post.DeInitPlugin();
@@ -191,7 +166,7 @@ public sealed class Plugin : IDalamudPlugin
     {
         var container = new RainbowMage.OverlayPlugin.TinyIoCContainer();
         
-        var logger = new RainbowMage.OverlayPlugin.Logger(Log);
+        var logger = new RainbowMage.OverlayPlugin.Logger(DalamudApi.PluginLog);
         container.Register(logger);
         container.Register<RainbowMage.OverlayPlugin.ILogger>(logger);
 
@@ -216,11 +191,11 @@ public sealed class Plugin : IDalamudPlugin
             IpcProviders.Server = WebSocketServer;
             IpcProviders.OverlayIpcHandler = container.Resolve<RainbowMage.OverlayPlugin.Handlers.Ipc.IpcHandlerController>();
             ConfigWindow.OverlayPluginConfig = container.Resolve<RainbowMage.OverlayPlugin.IPluginConfig>();
-            post = new PostNamazu.PostNamazu(DalamudApi.Commands);
+            post = new PostNamazu.PostNamazu(DalamudApi.CommandManager);
             post.InitPlugin();
             cactboSelf = new CactbotSelf.CactbotSelf(Configuration.shunxu, true);
             cactboSelf.InitPlugin();
-            PluginLog.Log("初始化鲶鱼精");
+            DalamudApi.LogInfo("初始化鲶鱼精");
             setZone();
 
         });

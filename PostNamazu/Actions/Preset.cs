@@ -5,25 +5,26 @@ using PostNamazu.Models;
 using Newtonsoft.Json;
 using PostNamazu.Common;
 using Dalamud;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 
 namespace PostNamazu.Actions
 {
     internal class Preset : NamazuModule
     {
-        private IntPtr UIModulePtrPtr;
+
         private Int32 WayMarkSlotOffset;
         public IntPtr MapIDPtr;
         
-        public override void GetOffsets()
+        public unsafe override void GetOffsets()
         {
             base.GetOffsets();
-            UIModulePtrPtr = SigScanner.GetStaticAddressFromSig("48 8B 05 ?? ?? ?? ?? 48 8B D9 8B 40 14 85 C0");
 
-            var mapIDOffset = SigScanner.Read<UInt16>(SigScanner.ScanText("66 89 81 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 44 8B CF") + 3);
-            MapIDPtr = SigScanner.GetStaticAddressFromSig("48 8D 0D ?? ?? ?? ?? 0F B6 55 ??") + mapIDOffset;
+
+            var mapIDOffset = SigScanner.Read<UInt16>(SigScanner.ScanText("44 89 81 ? ? ? ? 0F B7 84 24") + 3);
+            MapIDPtr = SigScanner.GetStaticAddressFromSig("48 8D 0D ?? ?? ?? ?? 0F B6 55 ?? 24") + mapIDOffset;
         }
 
-        private void GetWayMarkSlotOffset()
+        private unsafe void GetWayMarkSlotOffset()
         {
             var UIModuleSwitch = new SwitchParser(SigScanner, "8B 94 98 ?? ?? ?? ?? 48 03 D0", 3);
 
@@ -36,8 +37,8 @@ namespace PostNamazu.Actions
             //.text:000000014063AE41 48 FF A0 70 01 00 00                   jmp qword ptr[rax + 170h]
             var Case0x11 = UIModuleSwitch.Case(0x11);
             var offset = SigScanner.Read<int>(Case0x11 + 14);
-
-            var UIModulePtr = SigScanner.Read<IntPtr>(UIModulePtrPtr);
+            var framework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance();
+            var UIModulePtr = (IntPtr)framework->UIModule;;
             var UIModule = SigScanner.Read<IntPtr>(UIModulePtr);
             var FastCallAddressPtr = SigScanner.Read<IntPtr>(UIModule) + offset;
 
@@ -49,12 +50,13 @@ namespace PostNamazu.Actions
             //.text:00000001405BA9A7                        sub_1405BA9A0   endp
             WayMarkSlotOffset = SigScanner.Read<Int32>(FastCallAddress + 3);
         }
-        public IntPtr GetWaymarkDataPointerForSlot(uint slotNum)
+        public unsafe IntPtr GetWaymarkDataPointerForSlot(uint slotNum)
         {
+            var framework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance();
             //var g_Framework_2 = MemoryService.Read<IntPtr>(g_Framework_2_Ptr);
             //var UIModule = MemoryService.Read<IntPtr>(g_Framework_2 + 0x29F8);
-            var UIModulePtr = SigScanner.Read<IntPtr>(UIModulePtrPtr);
-            var UIModule = SigScanner.Read<IntPtr>(UIModulePtr);
+
+            var UIModule = (IntPtr)framework->UIModule; ;
 
             var WayMarkSlotPtr = UIModule + WayMarkSlotOffset;
             var WaymarkDataPointer = WayMarkSlotPtr + 64 + (int)(104 * (slotNum - 1));
