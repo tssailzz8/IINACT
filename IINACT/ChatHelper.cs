@@ -19,8 +19,8 @@ public static class ChatHelper
 {
 	private static class Signatures
 	{
-		internal const string SendChat = "48 89 5C 24 ?? 57 48 83 EC 20 48 8B FA 48 8B D9 45 84 C9";
-		internal const string SanitiseString = "E8 ?? ?? ?? ?? EB 0A 48 8D 4C 24 ?? E8 ?? ?? ?? ?? 48 8D 8D";
+		internal const string SendChat = "48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 48 8B F2 48 8B F9 45 84 C9";
+		internal const string SanitiseString = "E8 ?? ?? ?? ?? EB 0A 48 8D 4C 24 ?? E8 ?? ?? ?? ?? 48 8D AE";
 	}
 
 	private unsafe delegate void ProcessChatBoxDelegate(UIModule* uiModule, IntPtr message, IntPtr unused, byte a4);
@@ -78,32 +78,54 @@ public static class ChatHelper
 	/// <exception cref="InvalidOperationException">If the signature for this function could not be found</exception>
 	public unsafe static void SendMessage(string message)
 	{
-        var framework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance();
-        var uiModule = framework->GetUIModule();
+        try
+        {
+            var bytes = Encoding.UTF8.GetBytes(message);
+            if (bytes.Length == 0)
+            {
+                throw new ArgumentException("message is empty", nameof(message));
+            }
+            if (bytes.Length > 500)
+            {
+                throw new ArgumentException("message is longer than 500 bytes", nameof(message));
+            }
+            if (message.Length != SanitiseText(message).Length)
+            {
+                throw new ArgumentException("message contained invalid characters", nameof(message));
+            }
+            var framework = FFXIVClientStructs.FFXIV.Client.System.Framework.Framework.Instance();
+            var uiModule = framework->GetUIModule();
 
-        using var payload = new ChatPayload(message);
-        var payloadPtr = Marshal.AllocHGlobal(400);
-        Marshal.StructureToPtr(payload, payloadPtr, false);
+            using var payload = new ChatPayload(message);
+            var payloadPtr = Marshal.AllocHGlobal(400);
+            Marshal.StructureToPtr(payload, payloadPtr, false);
 
-        ProcessChatBox(uiModule, payloadPtr, IntPtr.Zero, 0);
+            ProcessChatBox(uiModule, payloadPtr, IntPtr.Zero, 0);
 
-        Marshal.FreeHGlobal(payloadPtr);
+            Marshal.FreeHGlobal(payloadPtr);
+        }
+        catch (Exception e)
+        {
+
+            DalamudApi.LogError(e.ToString());
+        }
+        
     }
 
-	/// <summary>
-	/// <para>
-	/// Sanitises a string by removing any invalid input.
-	/// </para>
-	/// <para>
-	/// The result of this method is safe to use with
-	/// <see cref="SendMessage"/>, provided that it is not empty or too
-	/// long.
-	/// </para>
-	/// </summary>
-	/// <param name="text">text to sanitise</param>
-	/// <returns>sanitised text</returns>
-	/// <exception cref="InvalidOperationException">If the signature for this function could not be found</exception>
-	public static unsafe string SanitiseText(string text)
+    /// <summary>
+    /// <para>
+    /// Sanitises a string by removing any invalid input.
+    /// </para>
+    /// <para>
+    /// The result of this method is safe to use with
+    /// <see cref="SendMessage"/>, provided that it is not empty or too
+    /// long.
+    /// </para>
+    /// </summary>
+    /// <param name="text">text to sanitise</param>
+    /// <returns>sanitised text</returns>
+    /// <exception cref="InvalidOperationException">If the signature for this function could not be found</exception>
+    public static unsafe string SanitiseText(string text)
 	{
 		if (_sanitiseString == null)
 		{

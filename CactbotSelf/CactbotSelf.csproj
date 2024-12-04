@@ -14,10 +14,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>full</DebugType>
   </PropertyGroup>
-
+    <PropertyGroup>
+        <DalamudLibPath>C:\Users\pc\AppData\Roaming\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="H.Pipes" Version="2.0.59" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="H.Pipes" Version="14.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
+      <Reference Include="Newtonsoft.Json">
+          <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
+          <Private>false</Private>
+      </Reference>
     <Reference Include="FFXIV_ACT_Plugin">
       <HintPath>..\external_dependencies\FFXIV_ACT_Plugin.dll</HintPath>
 		<Private>False</Private>
