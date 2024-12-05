@@ -41,7 +41,8 @@ public class FetchDependencies
         Directory.CreateDirectory(DependenciesDir);
         var pluginZipPath = Path.Combine(DependenciesDir, "FFXIV_ACT_Plugin.zip");
         var pluginPath = Path.Combine(DependenciesDir, "FFXIV_ACT_Plugin.dll");
-
+        var deucalionPath = Path.Combine(DependenciesDir, "deucalion-1.1.0.distrib.dll");
+        
         if (!NeedsUpdate(pluginPath))
             return;
 
