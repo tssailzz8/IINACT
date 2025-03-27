@@ -1,5 +1,5 @@
-using Advanced_Combat_Tracker;
-using Dalamud;
+using System.Diagnostics;
+using System.Reflection;
 using Dalamud.Game;
 using Dalamud.Game.Command;
 using Dalamud.Hooking;
@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Advanced_Combat_Tracker;
 
 namespace IINACT;
 
@@ -35,6 +36,7 @@ public sealed class Plugin : IDalamudPlugin
     private TextToSpeechProvider TextToSpeechProvider { get; }
     private MainWindow MainWindow { get; }
     internal FileDialogManager FileDialogManager { get; }
+    private GameServerTime GameServerTime { get; }
     private IpcProviders IpcProviders { get; }
 
     private FfxivActPluginWrapper FfxivActPluginWrapper { get; }
@@ -151,6 +153,7 @@ public sealed class Plugin : IDalamudPlugin
         DalamudApi.ClientState.EnterPvP -= EnterPvP;
         DalamudApi.ClientState.LeavePvP -= LeavePvP;
         IpcProviders.Dispose();
+        GameServerTime.Dispose();
         
         FfxivActPluginWrapper.Dispose();
         OverlayPlugin.DeInitPlugin();

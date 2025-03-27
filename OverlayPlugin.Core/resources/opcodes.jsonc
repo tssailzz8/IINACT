@@ -1,6 +1,3 @@
-// Please keep only one opcode map per region in this file
-// Older version opcodes can be retrieved from git history for this file
-// For more information, see comments on https://github.com/OverlayPlugin/OverlayPlugin/issues/235
 {
     "Chinese": {
         "2025.03.03.0000.0000": {
