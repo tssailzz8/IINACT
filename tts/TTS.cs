@@ -10,13 +10,19 @@ using System.Net.Sockets;
 using System.Diagnostics;
 using System.Net.WebSockets;
 using NAudio.Wave;
+using System.Windows.Forms.VisualStyles;
+using EdgeTtsSharp;
+using EdgeTtsSharp.NAudio;
+using Microsoft.VisualBasic.Logging;
 
 namespace tts
 {
     public class TTS : ITTSEngine
     {
+        //$"wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?TrustedClientToken=6A5AA1D4EAFF4E9FB37E23D68491D6&Sec-MS-GEC=B8566B41A9653BC10237D6B1AE7F08EC7063CC77DCD3A5964B4D052C16ADF&Sec-MS-GEC-Version=1-133.0.3065.92";
         private const string URL =
            "wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?TrustedClientToken=6A5AA1D4EAFF4E9FB37E23D68491D6F4";
+        private const string WSS_URL = "wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?TrustedClientToken=6A5AA1D4EAFF4E9FB37E23D68491D6F4";
         public static string CacheDirectory =>
            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FoxTTS\\cache");
 
@@ -92,12 +98,12 @@ namespace tts
                             retry++;
                             if (retry > 3)
                             {
-   
+
                                 break;
                             }
                             else
                             {
-       
+
                             }
                         }
                     }
@@ -146,8 +152,45 @@ namespace tts
             }
 
         }
+        private static string GenerateSecMsGecToken()
+        {
+            // see: https://github.com/STBBRD/EdgeTTS_dotNET_Framework/
+            // see: https://github.com/rany2/edge-tts/issues/290#issuecomment-2464956570
+            var ticks = (DateTime.UtcNow.Ticks / 3_000_000_000) * 3_000_000_000;
+            var str = $"{ticks}6A5AA1D4EAFF4E9FB37E23D68491D6F4";
+            return ToHexString(HashData(Encoding.ASCII.GetBytes(str)));
+        }
+        private static string ToHexString(byte[] byteArray)
+        {
+            return string.Concat(byteArray.Select(b => b.ToString("x2")));
+        }
+        private static byte[] HashData(byte[] data)
+        {
+            using var sha256 = SHA256.Create();
+            return sha256.ComputeHash(data);
+        }
         private readonly CancellationTokenSource _wsCancellationSource = new CancellationTokenSource();
-        private WebSocket _webSocket;
+        private WebSocket _webSocket= SystemClientWebSocket.CreateClientWebSocket();
+        private static string _sec_ms_gec;
+        private static long _ticks;
+
+        public static void Update()
+        {
+            long ticks = DateTime.Now.ToFileTimeUtc();
+            string str = (ticks - (ticks % 3_000_000_000)).ToString() + "6A5AA1D4EAFF4E9FB37E23D68491D6F4";
+            var Sha256 = new SHA256Managed();
+            byte[] by = Sha256.ComputeHash(Encoding.UTF8.GetBytes(str));
+
+            _sec_ms_gec = BitConverter.ToString(by).Replace("-", "").ToUpper();
+            _ticks = ticks;
+        }
+
+        public static string Get()
+        {
+            if (DateTime.Now.ToFileTimeUtc() >= _ticks + 3_000_000_000) Update();
+          
+            return _sec_ms_gec;
+        }
         private WebSocket ObtainConnection()
         {
             lock (this)
@@ -202,7 +245,9 @@ namespace tts
                     options.SetRequestHeader("Cache-Control", "no-cache");
                     options.SetRequestHeader("Pragma", "no-cache");
                 }
-                _webSocket.ConnectAsync(new Uri(URL), _wsCancellationSource.Token).Wait();
+                var wss =
+                $"{WSS_URL}&Sec-MS-GEC={Get()}&Sec-MS-GEC-Version=1-132.0.2917.0";
+                 _webSocket.ConnectAsync(new Uri(wss), _wsCancellationSource.Token).Wait();
                 return _webSocket;
             }
         }

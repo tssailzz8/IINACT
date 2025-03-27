@@ -202,9 +202,11 @@ namespace RainbowMage.OverlayPlugin.EventSources
 
             // Build a lookup table of currently known combatants
             var lookupTable = new Dictionary<uint, PluginCombatant>();
+            var list= combatants.ToList().Where(i=>i.type!=0);
             foreach (var c in combatants)
             {
 #if DEBUG
+
                 if (c.type != 0 /* None */)
                 {
                     lookupTable[c.ID] = c;
@@ -225,9 +227,11 @@ namespace RainbowMage.OverlayPlugin.EventSources
                 lock (partyList)
                 {
 
-                if (partyList.Count()==8)
+                if (partyList.Count()<8)
                 {
                     var a = 1;
+                    return;
+                   
                 }
                 foreach (var id in partyList)
                     {
@@ -242,7 +246,8 @@ namespace RainbowMage.OverlayPlugin.EventSources
                                 worldId = c.WorldID,
                                 job = c.Job,
                                 level = c.Level,
-                                inParty = c.type == 1 /* Party */,
+                                inParty = true /* Party */,
+                               
                             });
 #else
                             result.Add(new PartyMember
@@ -462,15 +467,22 @@ namespace RainbowMage.OverlayPlugin.EventSources
                 Log(LogLevel.Warning, $"Could not detect player alliance, value {cachedPartyList.currentPartyFlags:X8}");
             }
 #if DEBUG
+           
+            BuildPartyMemberResults(result, cachedPartyList.alliance1Members, remainingAlliances[0], true);
+            BuildPartyMemberResults(result, cachedPartyList.alliance2Members, remainingAlliances[1], true);
+            BuildPartyMemberResults(result, cachedPartyList.alliance3Members, remainingAlliances[2], true);
+            BuildPartyMemberResults(result, cachedPartyList.alliance4Members, remainingAlliances[3], true);
+            BuildPartyMemberResults(result, cachedPartyList.alliance5Members, remainingAlliances[4], true);
+
 #else
             BuildPartyMemberResults(result, cachedPartyList.partyMembers, currentAlliance, true);
-#endif
+
             BuildPartyMemberResults(result, cachedPartyList.alliance1Members, remainingAlliances[0], false);
             BuildPartyMemberResults(result, cachedPartyList.alliance2Members, remainingAlliances[1], false);
             BuildPartyMemberResults(result, cachedPartyList.alliance3Members, remainingAlliances[2], false);
             BuildPartyMemberResults(result, cachedPartyList.alliance4Members, remainingAlliances[3], false);
             BuildPartyMemberResults(result, cachedPartyList.alliance5Members, remainingAlliances[4], false);
-
+#endif
             Log(LogLevel.Debug, "party list: {0}", JObject.FromObject(new { party = result }).ToString());
 
             DispatchAndCacheEvent(JObject.FromObject(new

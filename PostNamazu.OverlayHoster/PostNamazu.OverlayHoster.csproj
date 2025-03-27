@@ -5,12 +5,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+    <PropertyGroup>
+        <DalamudLibPath>C:\Users\pc\AppData\Roaming\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    </PropertyGroup>
+
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
+      <Reference Include="Newtonsoft.Json">
+          <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
+          <Private>false</Private>
+      </Reference>
     <ProjectReference Include="..\OverlayPlugin.Common\OverlayPlugin.Common.csproj" />
     <ProjectReference Include="..\OverlayPlugin.Core\OverlayPlugin.Core.csproj" />
   </ItemGroup>

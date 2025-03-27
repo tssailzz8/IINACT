@@ -44,7 +44,7 @@ public sealed class Plugin : IDalamudPlugin
     private PluginLogTraceListener PluginLogTraceListener { get; }
     private HttpClient HttpClient { get; }
 
-    private delegate void OnUpdateInputUI(IntPtr EventArgument);
+    private delegate void OnUpdateInputUI(IntPtr EventArgument, IntPtr parm1);
     private Hook<OnUpdateInputUI> onUpdateInputUIHook;
     private static readonly Queue<string> ChatQueue = new();
     public DateTime NextClick;
@@ -87,7 +87,8 @@ public sealed class Plugin : IDalamudPlugin
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
         DalamudApi.Framework.Update += Updata;
-        onUpdateInputUIHook= DalamudApi.Hook.HookFromAddress<OnUpdateInputUI>(
+        DalamudApi.ClientState.Login += OnOnLogin;
+       onUpdateInputUIHook = DalamudApi.Hook.HookFromAddress<OnUpdateInputUI>(
                     DalamudApi.SigScanner.ScanText("4C 8B DC 56 41 57 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 83 B9 ?? ?? ?? ?? ?? 4C 8B FA"), OnUpdateInputUIDo);
         onUpdateInputUIHook.Enable();
 
@@ -112,6 +113,12 @@ public sealed class Plugin : IDalamudPlugin
         FormActMain.delta4 = DalamudApi.SigScanner.GetStaticAddressFromSig("44 8B 1D ?? ?? ?? ?? 43 8D 0C 10");
         FormActMain.deltaC = DalamudApi.SigScanner.GetStaticAddressFromSig("42 03 8C 93 ?? ?? ?? ??");
     }
+
+    private void OnOnLogin()
+    {
+       setZone();
+    }
+
     private FFXIV_ACT_Plugin.FFXIV_ACT_Plugin GetPluginData()
     {
         return ActGlobals.oFormActMain.FfxivPlugin;
@@ -120,9 +127,9 @@ public sealed class Plugin : IDalamudPlugin
 
 
 
-    private void OnUpdateInputUIDo(IntPtr EventArgument)
+    private void OnUpdateInputUIDo(IntPtr EventArgument, IntPtr parm1)
     {
-        onUpdateInputUIHook.Original(EventArgument);
+        onUpdateInputUIHook.Original(EventArgument, parm1);
         var now = DateTime.Now;
 
         if (this.NextClick < now && ChatQueue.Count > 0)
@@ -130,7 +137,7 @@ public sealed class Plugin : IDalamudPlugin
 
             var com = ChatQueue.Dequeue();
             ChatHelper.SendMessage(com);
-            this.NextClick = now.AddSeconds(1/6);
+            this.NextClick = now.AddSeconds(1/4);
         }
     }
 
@@ -153,6 +160,7 @@ public sealed class Plugin : IDalamudPlugin
         ConfigWindow.Dispose();
         MainWindow.Dispose();
         DalamudApi.Framework.Update -= Updata;
+        DalamudApi.ClientState.Login -= OnOnLogin;
         DalamudApi.CommandManager.RemoveHandler(MainWindowCommandName);
         DalamudApi.CommandManager.RemoveHandler(EndEncCommandName);
         DalamudApi.CommandManager.RemoveHandler(ChatCommandName);
@@ -204,9 +212,9 @@ public sealed class Plugin : IDalamudPlugin
     }
     private void setZone()
     {
-        var terr = DalamudApi.GameData.GetExcelSheet<Lumina.Excel.GeneratedSheets.TerritoryType>();
+        var terr = DalamudApi.GameData.GetExcelSheet<Lumina.Excel.Sheets.TerritoryType>();
         var zoneID = DalamudApi.ClientState.TerritoryType;
-        var zoneName = terr?.GetRow(zoneID)?.PlaceName.Value?.Name.RawString;
+        var zoneName = terr?.GetRowOrDefault(zoneID)?.PlaceName.Value.Name.ToDalamudString().ToString();
         ActGlobals.oFormActMain.CurrentZone = zoneName;
         if (_logOutput == null)
         {
@@ -283,7 +291,7 @@ public sealed class Plugin : IDalamudPlugin
         {
             NextClick = DateTime.Now.AddSeconds(1/6);
             ChatQueue.Enqueue(arguments);
-            //ChatHelper.SendMessage(arguments);
+            ChatHelper.SendMessage(arguments);
         }
 
     }

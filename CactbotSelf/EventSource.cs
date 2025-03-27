@@ -173,12 +173,13 @@ namespace CactbotSelf
 		public override void Start()
 		{
 			GetFfxivPlugin();
-			_processSwitcher = new BackgroundWorker { WorkerSupportsCancellation = true };
-			_processSwitcher.DoWork += ProcessSwitcher;
-			_processSwitcher.RunWorkerAsync();
+            //cactbotself启动
+            _processSwitcher = new BackgroundWorker { WorkerSupportsCancellation = true };
+            _processSwitcher.DoWork += ProcessSwitcher;
+            _processSwitcher.RunWorkerAsync();
 
 
-		}
+        }
 		private void ProcessSwitcher(object sender, DoWorkEventArgs e)
 		{
 			while (true)

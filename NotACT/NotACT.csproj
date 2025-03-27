@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <PropertyGroup>
-        <DalamudLibPath>E:\Dalamud\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+        <DalamudLibPath>C:\Users\pc\AppData\Roaming\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
 

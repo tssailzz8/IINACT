@@ -1,4 +1,4 @@
-﻿#nullable enable 
+#nullable enable 
 using Newtonsoft.Json;
 
 namespace PostNamazu.Models
@@ -30,5 +30,8 @@ namespace PostNamazu.Models
         circle,
         cross,
         triangle,
+        attack6,
+        attack7,
+        attack8,
     }
 }

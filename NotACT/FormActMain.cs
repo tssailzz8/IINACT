@@ -137,27 +137,29 @@ public partial class FormActMain : Form, ISynchronizeInvoke
             LogQueue.Enqueue(logLine);
         if (BeforeLogLineRead == null || GetDateTimeFromLog == null)
             return;
-        var log= logLine.Split(new char[] { '|'});
-        var logMesssageType = Int32.TryParse(log[0],out var a);
-        if (a!=0&&a!=254)
+        var log = logLine.Split(new char[] { '|' });
+        var logMesssageType = Int32.TryParse(log[0], out var a);
+
+        if (a == 27)
         {
-            var abcd = 1;
-        }
-        if (a ==27)
-        {
-            var 计算数1 = Marshal.ReadInt32(delta0);
-            var 计算数2 = Marshal.ReadInt32(delta4);
-            var 计算数3 = Marshal.ReadInt32(deltaC);
-            var objectID = Convert.ToUInt32(log[2],16);
-            if (objectID==0x102CECA1)
+            try
             {
-                var abcdef = 123;
+                var 计算数1 = Marshal.ReadInt32(delta0);
+                var 计算数2 = Marshal.ReadInt32(delta4);
+                var 计算数3 = Marshal.ReadInt32(deltaC);
+                var objectID = Convert.ToUInt32(log[2], 16);
+                var abc = Math.Min(计算数3 + 计算数1 - 计算数2, 0);
+                var id = Convert.ToUInt32(log[6], 16);
+
+                var trueID = id + abc;
+                logLine = logLine.Replace(log[6], $"{trueID:X4}");
             }
-            var abc = Math.Min(计算数3 + 计算数1 - 计算数2, 0);
-            var id= Convert.ToUInt32(log[6], 16);
- 
-            var trueID = id + abc;
-            logLine=logLine.Replace(log[6],$"{trueID:X4}");
+            catch (Exception)
+            {
+
+                ;
+            }
+
         }
         var parsedLogTime = GetDateTimeFromLog(logLine);
         LastKnownTime = parsedLogTime;
@@ -204,14 +206,23 @@ public partial class FormActMain : Form, ISynchronizeInvoke
 
     public void EndCombat(bool export)
     {
-        if (inCombat) inCombat = false;
-        if (ActiveZone.ActiveEncounter.Active)
+        try
         {
-            if (ActiveZone.PopulateAll)
-                ActiveZone.Items[0].EndCombat(Finalize: false);
+            if (inCombat) inCombat = false;
+            if (ActiveZone.ActiveEncounter.Active)
+            {
+                if (ActiveZone.PopulateAll)
+                    ActiveZone.Items[0].EndCombat(Finalize: false);
 
-            ActiveZone.ActiveEncounter.EndCombat(Finalize: true);
+                ActiveZone.ActiveEncounter.EndCombat(Finalize: true);
+            }
         }
+        catch (Exception)
+        {
+
+            
+        }
+        
     }
 
     public bool SelectiveListGetSelected(string Player)
