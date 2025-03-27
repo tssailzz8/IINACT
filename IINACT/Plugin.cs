@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Advanced_Combat_Tracker;
 
 namespace IINACT;
 

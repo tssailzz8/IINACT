@@ -39,7 +39,7 @@ internal class GameServerTime : IDisposable
     public GameServerTime(IGameInteropProvider gameInteropProvider, ISigScanner sigScanner)
     {
         var hookSignature = CreateUniqueRawPacketReceiveSig(sigScanner);
-        Plugin.Log.Debug($"Got hook sig for raw zone down: {hookSignature}");
+        DalamudApi.PluginLog.Debug($"Got hook sig for raw zone down: {hookSignature}");
         rawPacketReceiveHook =
             gameInteropProvider.HookFromSignature<RawPacketReceiveDelegate>(hookSignature, RawPacketReceiveDetour);
         rawPacketReceiveHook.Enable();
@@ -59,15 +59,15 @@ internal class GameServerTime : IDisposable
             try
             {
                 var scanRet = SigScanner.Scan(currentAddress, remainingSize, callPattern);
-                Plugin.Log.Debug($"Found CALL instruction at {scanRet:X}");
+               DalamudApi.PluginLog.Debug($"Found CALL instruction at {scanRet:X}");
                 functionAddress = scanRet;
                 remainingSize -= (int)(functionAddress.ToInt64() - currentAddress.ToInt64());
                 currentAddress = functionAddress + 1;
-                Plugin.Log.Debug($"Remaining size: {remainingSize:X}");
+                DalamudApi.PluginLog.Debug($"Remaining size: {remainingSize:X}");
             }
             catch (KeyNotFoundException)
             {
-                Plugin.Log.Debug($"No more CALL instructions found. Remaining size: {remainingSize}");
+                DalamudApi.PluginLog.Debug($"No more CALL instructions found. Remaining size: {remainingSize}");
                 break;
             }
         }
