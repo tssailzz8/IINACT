@@ -4,21 +4,21 @@ using System.Runtime.InteropServices;
 
 namespace RainbowMage.OverlayPlugin.MemoryProcessors.Combatant
 {
-    interface ICombatantMemory65 : ICombatantMemory { }
+    interface ICombatantMemory72 : ICombatantMemory { }
 
-    class CombatantMemory65 : CombatantMemory, ICombatantMemory65
+    class CombatantMemory72 : CombatantMemory, ICombatantMemory72
     {
         private const string charmapSignature = "488B5720B8000000E0483BD00F84????????488D0D";
 
-        public CombatantMemory65(TinyIoCContainer container)
-            : base(container, charmapSignature, CombatantMemory.Size, EffectMemory.Size)
+        public CombatantMemory72(TinyIoCContainer container)
+            : base(container, charmapSignature, CombatantMemory.Size, EffectMemory.Size, 629)
         {
 
         }
 
         public override Version GetVersion()
         {
-            return new Version(6, 5);
+            return new Version(7, 2);
         }
 
         // Returns a combatant if the combatant is a mob or a PC.
@@ -54,11 +54,11 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.Combatant
                     ID = mem.ID,
                     OwnerID = mem.OwnerID == emptyID ? 0 : mem.OwnerID,
                     Type = (ObjectType)mem.Type,
-                    MonsterType = (MonsterType)mem.MonsterType,
+                    MonsterType = 0,
                     Status = (ObjectStatus)mem.Status,
                     ModelStatus = (ModelStatus)mem.ModelStatus,
                     // Normalize all possible aggression statuses into the basic 4 ones.
-                    AggressionStatus = (AggressionStatus)(mem.AggressionStatus - (mem.AggressionStatus / 4) * 4),
+                    AggressionStatus = 0,
                     NPCTargetID = mem.NPCTargetID,
                     RawEffectiveDistance = mem.EffectiveDistance,
                     PosX = mem.PosX,
@@ -147,111 +147,105 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.Combatant
             [FieldOffset(0x94)]
             public byte Status;
 
-            [FieldOffset(0xB0)]
+            [FieldOffset(0xA0)]
             public Single PosX;
 
-            [FieldOffset(0xB4)]
+            [FieldOffset(0xA4)]
             public Single PosY;
 
-            [FieldOffset(0xB8)]
+            [FieldOffset(0xA8)]
             public Single PosZ;
 
-            [FieldOffset(0xC0)]
+            [FieldOffset(0xB0)]
             public Single Heading;
 
-            [FieldOffset(0xD0)]
+            [FieldOffset(0xC0)]
             public Single Radius;
 
-            [FieldOffset(0x114)]
+            [FieldOffset(0x108)]
             public int ModelStatus;
 
-            [FieldOffset(0x1BC)]
+            [FieldOffset(0x19C)]
             public int CurrentHP;
 
-            [FieldOffset(0x1C0)]
+            [FieldOffset(0x1A0)]
             public int MaxHP;
 
-            [FieldOffset(0x1C4)]
+            [FieldOffset(0x1A4)]
             public int CurrentMP;
 
-            [FieldOffset(0x1C8)]
+            [FieldOffset(0x1A8)]
             public int MaxMP;
 
-            [FieldOffset(0x1CC)]
+            [FieldOffset(0x1AC)]
             public ushort CurrentGP;
 
-            [FieldOffset(0x1CE)]
+            [FieldOffset(0x1AE)]
             public ushort MaxGP;
 
-            [FieldOffset(0x1D0)]
+            [FieldOffset(0x1B0)]
             public ushort CurrentCP;
 
-            [FieldOffset(0x1D2)]
+            [FieldOffset(0x1B2)]
             public ushort MaxCP;
 
-            [FieldOffset(0x1D4)]
+            [FieldOffset(0x1B4)]
             public short TransformationId;
 
-            [FieldOffset(0x1DA)]
+            [FieldOffset(0x1BA)]
             public byte Job;
 
-            [FieldOffset(0x1DB)]
+            [FieldOffset(0x1BB)]
             public byte Level;
 
-            [FieldOffset(0xC30)]
+            [FieldOffset(0xC60)]
             public byte WeaponId;
 
-            [FieldOffset(0xD00)]
+            // TODO: Verify for 7.1. Could potentially be 0xD50, 0xF30, 0x1110
+            [FieldOffset(0xD40)]
             public uint PCTargetID;
 
-            // TODO: this is still incorrect as of 6.5, should we drop this field if we can't find it again?
-            [FieldOffset(0x19C3)]
-            public byte MonsterType;
-
-            // TODO: this is still incorrect as of 6.5, should we drop this field if we can't find it again?
-            [FieldOffset(0x19DF)]
-            public byte AggressionStatus;
-
-            [FieldOffset(0x1B58)]
+            // TODO: Verify for 7.1. Could potentially be 0x19EC or 0x2288
+            [FieldOffset(0x2278)]
             public uint NPCTargetID;
 
-            [FieldOffset(0x1B98)]
+            [FieldOffset(0x22A4)]
             public uint BNpcNameID;
 
-            [FieldOffset(0x1BB0)]
+            [FieldOffset(0x22C8)]
             public ushort CurrentWorldID;
 
-            [FieldOffset(0x1BB2)]
+            [FieldOffset(0x22CA)]
             public ushort WorldID;
 
-            [FieldOffset(0x1C18)]
+            [FieldOffset(0x2328)]
             public fixed byte Effects[EffectBytes];
 
-            [FieldOffset(0x1F00)]
+            [FieldOffset(0x2700)]
             public byte IsCasting1;
 
-            [FieldOffset(0x1F02)]
+            [FieldOffset(0x2702)]
             public byte IsCasting2;
 
-            [FieldOffset(0x1F04)]
+            [FieldOffset(0x2704)]
             public uint CastBuffID;
 
-            [FieldOffset(0x1F10)]
+            [FieldOffset(0x2710)]
             public uint CastTargetID;
-            
-            [FieldOffset(0x1F20)]
+
+            [FieldOffset(0x2720)]
             public float CastGroundTargetX;
 
-            [FieldOffset(0x1F24)]
+            [FieldOffset(0x2724)]
             public float CastGroundTargetY;
 
-            [FieldOffset(0x1F28)]
+            [FieldOffset(0x2728)]
             public float CastGroundTargetZ;
 
-            [FieldOffset(0x1F34)]
+            [FieldOffset(0x2734)]
             public float CastDurationCurrent;
 
-            [FieldOffset(0x1F38)]
+            [FieldOffset(0x2738)]
             public float CastDurationMax;
 
             // Missing PartyType

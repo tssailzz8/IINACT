@@ -53,7 +53,6 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.ContentFinderSettings
         public void ScanPointers()
         {
             List<IContentFinderSettingsMemory> candidates = new List<IContentFinderSettingsMemory>();
-
             candidates.Add(container.Resolve<IContentFinderSettingsMemory70>());
             candidates.Add(container.Resolve<IContentFinderSettingsMemory71>());
             memory = FFXIVMemory.FindCandidate(candidates, repository.GetMachinaRegion());
