@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <TargetFramework>net8.0-windows7.0</TargetFramework>
+      <TargetFramework>net9.0-windows7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -16,7 +16,7 @@
   </PropertyGroup>
 
     <PropertyGroup>
-        <DalamudLibPath>C:\Users\pc\AppData\Roaming\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+        <DalamudLibPath>C:\Users\pc\AppData\Roaming\XIVLauncherCN\addon\Hooks\dev\</DalamudLibPath>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     </PropertyGroup>
@@ -32,11 +32,11 @@
           <Private>false</Private>
       </Reference>
     <Reference Include="Dalamud">
-      <HintPath>$(appdata)\XIVLauncher\addon\Hooks\dev\\Dalamud.dll</HintPath>
+      <HintPath>$(appdata)\XIVLauncherCN\addon\Hooks\dev\\Dalamud.dll</HintPath>
         <Private>False</Private>
     </Reference>
     <Reference Include="FFXIVClientStructs">
-      <HintPath>$(appdata)\XIVLauncher\addon\Hooks\dev\\FFXIVClientStructs.dll</HintPath>
+      <HintPath>$(appdata)\XIVLauncherCN\addon\Hooks\dev\\FFXIVClientStructs.dll</HintPath>
         <Private>False</Private>
     </Reference>
     <Reference Include="FFXIV_ACT_Plugin">
@@ -72,11 +72,11 @@
 		<Private>False</Private>
     </Reference>
     <Reference Include="ImGui.NET">
-      <HintPath>$(appdata)\XIVLauncher\addon\Hooks\dev\\ImGui.NET.dll</HintPath>
+      <HintPath>$(appdata)\XIVLauncherCN\addon\Hooks\dev\\ImGui.NET.dll</HintPath>
         <Private>False</Private>
     </Reference>
     <Reference Include="ImGuiScene">
-      <HintPath>$(appdata)\XIVLauncher\addon\Hooks\dev\\ImGuiScene.dll</HintPath>
+      <HintPath>$(appdata)\XIVLauncherCN\addon\Hooks\dev\\ImGuiScene.dll</HintPath>
         <Private>False</Private>
     </Reference>
       <Reference Include="FFXIVClientStructs">

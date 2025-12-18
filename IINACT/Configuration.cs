@@ -8,9 +8,9 @@ namespace IINACT;
 public class Configuration : IPluginConfiguration
 {
     [JsonIgnore]
+    public List<string> shunxu = new();
     public string DefaultLogFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "IINACT");
     private string? logFilePath;
-    public List<string> shunxu=new();
     public int TTSIndex;
     public bool UseEdeg;
 

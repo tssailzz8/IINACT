@@ -27,10 +27,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Reference Include="Dalamud">
-          <HintPath>$(DalamudLibPath)\Dalamud.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
         <Reference Include="Mono.Cecil">
             <HintPath>$(DalamudLibPath)Mono.Cecil.dll</HintPath>
             <Private>false</Private>

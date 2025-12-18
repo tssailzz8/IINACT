@@ -22,15 +22,15 @@ public class DalamudApi
     public static IDalamudPluginInterface PluginInterface { get; private set; }
 
     [PluginService]
-    public static IChatGui Chat { get; private set; }
+    public static IChatGui ChatGui { get; private set; }
+    [PluginService] 
+    public static IDataManager GameData { get; private set; }
 
     [PluginService]
     public static IClientState ClientState { get; private set; }
-    [PluginService] public static IDataManager GameData { get; private set; }
 
     [PluginService]
     public static ICommandManager CommandManager { get; private set; }
-    [PluginService] public static IObjectTable Objects { get; private set; }
 
     [PluginService]
     public static ICondition Condition { get; private set; }
@@ -40,10 +40,6 @@ public class DalamudApi
 
     [PluginService]
     public static IGameInteropProvider Hook { get; private set; }
-    [PluginService] public static IGameGui GameGui { get; private set; }
-
-    [PluginService]
-    public static IGameNetwork GameNetwork { get; private set; }
 
     [PluginService]
     public static INotificationManager NotificationManager { get; private set; }
@@ -88,9 +84,9 @@ public class DalamudApi
         throw new InvalidOperationException();
     }
 
-    public static void PrintEcho(string message) => DalamudApi.Chat.Print($"{printHeader}{message}");
+    public static void PrintEcho(string message) => ChatGui.Print($"{printHeader}{message}");
 
-    public static void PrintError(string message) => DalamudApi.Chat.PrintError($"{printHeader}{message}");
+    public static void PrintError(string message) => ChatGui.PrintError($"{printHeader}{message}");
 
     public static void ShowNotification(string message, NotificationType type = NotificationType.None, uint msDelay = 3_000u) => NotificationManager.AddNotification(new Notification { Type = type, Title = printName, Content = message, InitialDuration = TimeSpan.FromMilliseconds(msDelay) });
 

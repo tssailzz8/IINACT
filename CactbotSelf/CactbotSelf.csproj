@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <TargetFramework>net9.0-windows7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
     <PropertyGroup>
-        <DalamudLibPath>C:\Users\pc\AppData\Roaming\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+        <DalamudLibPath>C:\Users\pc\AppData\Roaming\XIVLauncherCN\addon\Hooks\dev\</DalamudLibPath>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     </PropertyGroup>
@@ -67,7 +67,7 @@
 		<Private>False</Private>
     </Reference>
     <Reference Include="Iced">
-      <HintPath>$(appdata)\XIVLauncher\addon\Hooks\dev\Iced.dll</HintPath>
+      <HintPath>$(appdata)\XIVLauncherCN\addon\Hooks\dev\Iced.dll</HintPath>
         <Private>False</Private>
     </Reference>
   </ItemGroup>

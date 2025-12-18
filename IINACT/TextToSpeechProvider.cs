@@ -1,91 +1,76 @@
-using System.Configuration;
-using System.Diagnostics;
 using System.Speech.Synthesis;
-using System.Text.RegularExpressions;
-using Dalamud.Logging;
-using tts;
+using System.Web;
+using NAudio.Wave;
 
 namespace IINACT;
 
 internal class TextToSpeechProvider
 {
-    private string binary = "/usr/bin/say";
-    private string args = "";
     private readonly object speechLock = new();
+    private readonly HttpClient client = new();
     private readonly SpeechSynthesizer? speechSynthesizer;
-    tts.TTS tts;
-    Configuration configuration;
-    public TextToSpeechProvider(Configuration con)
+    
+    public TextToSpeechProvider()
     {
-        try
+        if (!Dalamud.Utility.Util.IsWine())
         {
-            configuration = con;
-            speechSynthesizer = new SpeechSynthesizer();
-            speechSynthesizer?.SetOutputToDefaultAudioDevice();
-            tts = new tts.TTS();
+            try
+            {
+                speechSynthesizer = new SpeechSynthesizer();
+                speechSynthesizer?.SetOutputToDefaultAudioDevice();
+            }
+            catch (Exception ex)
+            {
+                Plugin.Log.Warning(ex, "Failed to initialize SAPI TTS engine");
+                speechSynthesizer = null;
+            }
         }
-        catch (Exception ex)
-        {
-            DalamudApi.PluginLog.Warning(ex, "Failed to initialize SAPI TTS engine");
-        }
-
+        
         Advanced_Combat_Tracker.ActGlobals.oFormActMain.TextToSpeech += Speak;
     }
-
+    
     public void Speak(string message)
     {
-        if (new FileInfo(binary).Exists)
+        Task.Run(() =>
         {
             try
             {
-                var ttsProcess = new Process
-                {
-                    StartInfo =
-                    {
-                        FileName = "C:\\windows\\system32\\start.exe",
-                        CreateNoWindow = true,
-                        UseShellExecute = false,
-                        Arguments = $"/unix {binary} {args} \"" +
-                                    Regex.Replace(Regex.Replace(message, @"(\\*)" + "\"", @"$1$1\" + "\""),
-                                                  @"(\\+)$", @"$1$1") + "\""
-                    }
-                };
-                lock (speechLock)
-                {
-                    ttsProcess.Start();
-                    // heuristic pause
-                    Thread.Sleep(500 * message.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length);
-                }
-
-                return;
+                if (speechSynthesizer == null)
+                    SpeakGoogle(message);
+                else
+                    SpeakSapi(message);
             }
             catch (Exception ex)
             {
-                DalamudApi.LogError($"TTS failed to play back {message}",ex);
-                return;
+                Plugin.Log.Error(ex, $"TTS failed to play back {message}");
             }
-        }
-        else
+        });
+    }
+
+    private void SpeakGoogle(string message)
+    {
+        var query = HttpUtility.UrlEncode(message);
+        const string lang = "en";
+        var url = $"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl={lang}&q={query}";
+        var mp3Data = client.GetByteArrayAsync(url).Result;
+
+        using var stream = new MemoryStream(mp3Data);
+        using var reader = new Mp3FileReader(stream);
+        using var waveOut = new WaveOutEvent();
+        waveOut.Init(reader);
+        var waitHandle = new ManualResetEventSlim(false);
+        
+        lock (speechLock)
         {
-            try
-            {
-                lock (speechLock)
-                {
-                    if (configuration.UseEdeg)
-                    {
-                        tts.Speak(message, configuration.TTSIndex);
-                    }
-                    else speechSynthesizer?.Speak(message);
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-                DalamudApi.PluginLog.Error($"TTS failed to play back {message}",ex);
-            }
+            waveOut.Play();
+            waveOut.PlaybackStopped += (s, e) => waitHandle.Set();
+            waitHandle.Wait();
         }
-
-
+    }
+    
+    private void SpeakSapi(string message)
+    {
+        lock (speechLock)
+            speechSynthesizer?.Speak(message);
     }
 }

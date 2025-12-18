@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Globalization;
 using System.Media;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Advanced_Combat_Tracker.Resources;
 using Dalamud.Plugin.Services;
@@ -27,6 +25,7 @@ public partial class FormActMain : Form, ISynchronizeInvoke
     private HistoryRecord lastZoneRecord;
     private Thread logReaderThread;
     private Thread logWriterThread;
+    private bool pluginActive = true;
 
     internal volatile bool refreshTree;
 
@@ -189,44 +188,16 @@ public partial class FormActMain : Form, ISynchronizeInvoke
         PluginLog.Error(ex, $"[NotAct] {MoreInfo}");
 
     public void OpenLog(bool GetCurrentZone, bool GetCharNameFromFile) { }
-    public static IntPtr delta0 = IntPtr.Zero;
-    public static IntPtr delta4 = IntPtr.Zero;
-    public static IntPtr deltaC = IntPtr.Zero;
+
     public void ParseRawLogLine(string logLine)
     {
         if (WriteLogFile && !DisableWritingPvpLogFile)
             LogQueue.Enqueue(logLine);
         if (BeforeLogLineRead == null || GetDateTimeFromLog == null)
             return;
-        var log = logLine.Split(new char[] { '|' });
-        var logMesssageType = Int32.TryParse(log[0], out var a);
-
-        if (a == 27)
-        {
-            try
-            {
-                var 计算数1 = Marshal.ReadInt32(delta0);
-                var 计算数2 = Marshal.ReadInt32(delta4);
-                var 计算数3 = Marshal.ReadInt32(deltaC);
-                var objectID = Convert.ToUInt32(log[2], 16);
-                var abc = Math.Min(计算数3 + 计算数1 - 计算数2, 0);
-                var id = Convert.ToUInt32(log[6], 16);
-
-                var trueID = id + abc;
-                logLine = logLine.Replace(log[6], $"{trueID:X4}");
-            }
-            catch (Exception)
-            {
-
-                ;
-            }
-        }
         var parsedLogTime = GetDateTimeFromLog(logLine);
         LastKnownTime = parsedLogTime;
-
         var logLineEventArgs = new LogLineEventArgs(logLine, 0, parsedLogTime, CurrentZone, inCombat, "Plugin");
-        if (inCombat) { 
-            this.ActiveZone.ActiveEncounter.LogLines.Add(new LogLineEntry(parsedLogTime, logLine, logLineEventArgs.detectedType, this.GlobalTimeSorter)); }
         BeforeLogLineRead(false, logLineEventArgs);
         if (OnLogLineRead == null)
             return;
@@ -256,6 +227,7 @@ public partial class FormActMain : Form, ISynchronizeInvoke
 
         if (ActiveZone != null) return;
         ActiveZone = new ZoneData(DateTime.Now, CurrentZone, true, false, false);
+        ZoneList.Add(ActiveZone);
     }
 
     public void ActCommands(string commandText)
@@ -266,23 +238,14 @@ public partial class FormActMain : Form, ISynchronizeInvoke
 
     public void EndCombat(bool export)
     {
-        try
+        if (inCombat) inCombat = false;
+        if (ActiveZone.ActiveEncounter.Active)
         {
-            if (inCombat) inCombat = false;
-            if (ActiveZone.ActiveEncounter.Active)
-            {
-                if (ActiveZone.PopulateAll)
-                    ActiveZone.Items[0].EndCombat(Finalize: false);
+            if (ActiveZone.PopulateAll)
+                ActiveZone.Items[0].EndCombat(Finalize: false);
 
-                ActiveZone.ActiveEncounter.EndCombat(Finalize: true);
-            }
+            ActiveZone.ActiveEncounter.EndCombat(Finalize: true);
         }
-        catch (Exception)
-        {
-
-            
-        }
-        
     }
 
     public bool SelectiveListGetSelected(string Player)
@@ -409,7 +372,7 @@ public partial class FormActMain : Form, ISynchronizeInvoke
         {
             using var stream = new FileStream(LogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
             using var outputWriter = new StreamWriter(stream);
-            while (true)
+            while (pluginActive)
             {
                 if (!WriteLogFile || DisableWritingPvpLogFile)
                 {
@@ -449,7 +412,7 @@ public partial class FormActMain : Form, ISynchronizeInvoke
         try
         {
             var logOutput = (LogOutput)FfxivPlugin._dataCollection._logOutput;
-            while (true)
+            while (pluginActive)
             {
                 string? logLine = null;
                 lock (logOutput._LogQueueLock)
@@ -488,7 +451,7 @@ public partial class FormActMain : Form, ISynchronizeInvoke
     {
         try
         {
-            while (true)
+            while (pluginActive)
             {
                 while (afterActionsQueue.TryDequeue(out var masterSwing))
                 {
@@ -582,5 +545,10 @@ public partial class FormActMain : Form, ISynchronizeInvoke
         {
             WriteExceptionLog(ex, $"sound file: {file}");
         }
+    }
+
+    internal void Exit()
+    {
+        pluginActive = false;
     }
 }

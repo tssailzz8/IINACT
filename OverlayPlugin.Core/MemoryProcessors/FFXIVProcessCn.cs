@@ -1,34 +1,33 @@
-using Microsoft.VisualBasic;
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json.Linq;
 
 namespace RainbowMage.OverlayPlugin.MemoryProcessors
 {
     public class FFXIVProcessCn : FFXIVProcess
     {
-        // Last updated for FFXIV 7.0
+        // Last updated for FFXIV 7.3 from ShadyWhit
 
         [StructLayout(LayoutKind.Explicit)]
         public unsafe struct EntityMemory
         {
             public static int Size => Marshal.SizeOf(typeof(EntityMemory));
 
-            // Unknown size, but this is the bytes up to the next field.
-            public const int nameBytes = 68;
+            // 64 bytes per both OverlayPlugin & aers/FFXIVClientStructs
+            public const int nameBytes = 64;
 
             [FieldOffset(0x30)]
             public fixed byte Name[nameBytes];
 
-            [FieldOffset(0x74)]
+            [FieldOffset(0x78)]
             public uint id;
 
-            [FieldOffset(0x8C)]
+            [FieldOffset(0x90)]
             public EntityType type;
 
-            [FieldOffset(0x92)]
+            [FieldOffset(0x96)]
             public ushort distance;
 
             [FieldOffset(0xB0)]
@@ -43,43 +42,43 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             [FieldOffset(0xC0)]
             public Single rotation;
 
-            [FieldOffset(0x1BC)]
+            [FieldOffset(0x1A0)]
             public CharacterDetails charDetails;
-
-            [FieldOffset(0x1E6)]
-            public byte shieldPercentage;
         }
 
         [StructLayout(LayoutKind.Explicit)]
         public struct CharacterDetails
         {
 
-            [FieldOffset(0x00)]
+            [FieldOffset(0x0C)]
             public int hp;
 
-            [FieldOffset(0x04)]
+            [FieldOffset(0x10)]
             public int max_hp;
 
-            [FieldOffset(0x08)]
+            [FieldOffset(0x14)]
             public short mp;
 
-            [FieldOffset(0x10)]
+            [FieldOffset(0x1C)]
             public short gp;
 
-            [FieldOffset(0x12)]
+            [FieldOffset(0x1E)]
             public short max_gp;
 
-            [FieldOffset(0x14)]
+            [FieldOffset(0x20)]
             public short cp;
 
-            [FieldOffset(0x16)]
+            [FieldOffset(0x22)]
             public short max_cp;
 
-            [FieldOffset(0x1E)]
+            [FieldOffset(0x2A)]
             public EntityJob job;
 
-            [FieldOffset(0x1F)]
+            [FieldOffset(0x2B)]
             public byte level;
+
+            [FieldOffset(0x2E)]
+            public byte shieldPercentage;
         }
         public FFXIVProcessCn(TinyIoCContainer container) : base(container) { }
 
@@ -103,7 +102,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
         // In combat boolean.
         // This address is written to by "mov [rax+rcx],bl" and has three readers.
         // This reader is "cmp byte ptr [ffxiv_dx11.exe+????????],00 { (0),0 }"
-        private static String kInCombatSignature = "803D??????????74??488B03488BCBFF50";
+        private static String kInCombatSignature = "74??803D??????????74??488B03488BCBFF50";
         private static int kInCombatSignatureOffset = -15;
         private static bool kInCombatSignatureRIP = true;
         // Because this line is a cmp byte line, the signature is not at the end of the line.
@@ -126,7 +125,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             p = SigScan(kCharmapSignature, kCharmapSignatureOffset, kCharmapSignatureRIP);
             if (p.Count == 0)
             {
-                logger_.Log(LogLevel.Error, "Charmap signature found ", p.Count);
+                logger_.Log(LogLevel.Error, "Charmap signature found " + p.Count + " matches");
             }
             else
             {
@@ -198,7 +197,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
                     // This doesn't exist in memory, so just send the right value.
                     // As there are other versions that still have it, don't change the event.
                     entity.max_mp = 10000;
-                    entity.shield_value = mem.shieldPercentage * entity.max_hp / 100;
+                    entity.shield_value = mem.charDetails.shieldPercentage * entity.max_hp / 100;
 
                     if (IsGatherer(entity.job))
                     {
@@ -564,9 +563,6 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
         public struct ThaumaturgeJobMemory
         {
             [FieldOffset(0x02)]
-            public ushort umbralMilliseconds; // Number of ms left in umbral fire/ice.
-
-            [FieldOffset(0x04)]
             public sbyte umbralStacks; // Positive = Umbral Fire Stacks, Negative = Umbral Ice Stacks.
         };
 
@@ -584,19 +580,16 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             public ushort nextPolyglotMilliseconds; // Number of ms left before polyglot proc.
 
             [FieldOffset(0x02)]
-            public ushort umbralMilliseconds; // Number of ms left in umbral fire/ice.
-
-            [FieldOffset(0x04)]
             public sbyte umbralStacks; // Positive = Umbral Fire Stacks, Negative = Umbral Ice Stacks.
 
-            [FieldOffset(0x05)]
+            [FieldOffset(0x03)]
             public byte umbralHearts;
 
-            [FieldOffset(0x06)]
+            [FieldOffset(0x04)]
             public byte polyglot;
 
             [NonSerialized]
-            [FieldOffset(0x07)]
+            [FieldOffset(0x05)]
             private EnochianFlags enochian_state;
 
             public bool enochian

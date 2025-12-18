@@ -18,7 +18,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             this.process = process;
             if (process == null || process.HasExited)
                 return;
-            Handle = (IntPtr)(-1);
+            Handle = -1;
         }
 
         public IntPtr Handle { get; } = IntPtr.Zero;
@@ -119,13 +119,6 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
                    job == EntityJob.WVR ||
                    job == EntityJob.ALC ||
                    job == EntityJob.CUL;
-        }
-
-        static internal string ToProperCase(string name)
-        {
-            System.Globalization.CultureInfo cultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
-            System.Globalization.TextInfo textInfo = cultureInfo.TextInfo;
-            return textInfo.ToTitleCase(name);
         }
 
         [Serializable]

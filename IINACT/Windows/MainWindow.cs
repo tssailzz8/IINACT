@@ -1,15 +1,13 @@
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using FFXIV_ACT_Plugin.Config;
-using ImGuiNET;
 using RainbowMage.OverlayPlugin;
 using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
@@ -17,6 +15,23 @@ namespace IINACT.Windows;
 
 public class MainWindow : Window, IDisposable
 {
+    public List<string> shunxu = new List<string> { "黑骑", "枪刃", "战士", "骑士", "白魔", "占星", "贤者", "学者", "武士", "武僧", "镰刀", "龙骑", "忍者", "机工", "舞者", "诗人", "黑魔", "召唤", "赤魔" };
+    public enum TTS
+    {
+        女晓晓,
+        女晓依,
+        男云健,
+        男云扬,
+        男云霞,
+        男云希,
+        女曉佳,
+        女曉臻,
+        女七海,
+        女阿莉雅,
+        女珍妮,
+        男盖,
+        女索尼娅
+    }
     private Plugin Plugin { get; }
 
     private int selectedOverlayIndex;
@@ -28,10 +43,8 @@ public class MainWindow : Window, IDisposable
             MinimumSize = new Vector2(307, 207),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
-        SizeCondition = ImGuiCond.Always;
-        IsOpen = false;
+
         Plugin = plugin;
-        
     }
 
     public IPluginConfig? OverlayPluginConfig { get; set; }
@@ -93,13 +106,10 @@ public class MainWindow : Window, IDisposable
         }
 
         var selectedOverlay = OverlayPresets?[selectedOverlayIndex];
-
-        var overlayUri = selectedOverlay?.ToOverlayUri(new Uri($"ws://{Server?.Address}:{Server?.Port}/ws"));
+        Uri.TryCreate($"ws://{Server?.Address}:{Server?.Port}/ws", UriKind.Absolute, out var webSocketServer);
+        var overlayUri = selectedOverlay?.ToOverlayUri(webSocketServer);
         var overlayUriString = overlayUri?.ToString() ?? "<Error generating URI>";
-        if (overlayUriString.Contains("ff14-overlay-dungeon-cn"))
-        {
-            var abc = 1;
-        }
+
         ImGui.SetNextItemWidth(comboWidth);
         ImGui.InputText("URI", ref overlayUriString, 1000, ImGuiInputTextFlags.ReadOnly);
 
@@ -188,7 +198,7 @@ public class MainWindow : Window, IDisposable
         var disablePvp = Plugin.Configuration.DisablePvp;
         if (ImGui.Checkbox("Disable writing out network log file in PvP", ref disablePvp))
         {
-            if (DalamudApi.ClientState.IsPvP && disablePvp) Plugin.Configuration.DisableWritingPvpLogFile = true;
+            if (Plugin.ClientState.IsPvP && disablePvp) Plugin.Configuration.DisableWritingPvpLogFile = true;
 
             Plugin.Configuration.DisablePvp = disablePvp;
             Plugin.Configuration.Save();
@@ -214,7 +224,28 @@ public class MainWindow : Window, IDisposable
             Plugin.Configuration.ShowDebug = showDebug;
             Plugin.Configuration.Save();
         }
+        if (ImGui.Checkbox("使用Edeg语音", ref Plugin.Configuration.UseEdeg))
+        {
+            Plugin.Configuration.Save();
+        }
 
+        if (Plugin.Configuration.UseEdeg)
+        {
+            if (ImGui.BeginCombo("TTS", Enum.GetName(typeof(TTS), Plugin.Configuration.TTSIndex)))
+            {
+                foreach (var tts in Enum.GetValues<TTS>())
+                {
+                    if (ImGui.Selectable(Enum.GetName(typeof(TTS), tts),
+                                    (TTS)Plugin.Configuration.TTSIndex == tts))
+                    {
+                        Plugin.Configuration.TTSIndex = (int)tts;
+                        Plugin.Configuration.Save();
+                    }
+                }
+                ImGui.EndCombo();
+            }
+
+        }
         if (!showDebug) return;
 
         ImGui.Spacing();

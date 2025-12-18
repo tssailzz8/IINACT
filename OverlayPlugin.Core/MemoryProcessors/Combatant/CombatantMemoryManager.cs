@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using RainbowMage.OverlayPlugin.MemoryProcessors.Aggro;
@@ -10,6 +10,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.Combatant
         Combatant GetSelfCombatant();
         Combatant GetCombatantFromAddress(IntPtr address, uint selfCharID);
         List<Combatant> GetCombatantList();
+        void ReturnCombatant(Combatant combatant);
     }
 
     public class CombatantMemoryManager : ICombatantMemory
@@ -24,6 +25,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.Combatant
             container.Register<ICombatantMemory70, CombatantMemory70>();
             container.Register<ICombatantMemory71, CombatantMemory71>();
             container.Register<ICombatantMemory72, CombatantMemory72>();
+            container.Register<ICombatantMemory73, CombatantMemory73>();
             repository = container.Resolve<FFXIVRepository>();
 
             var memory = container.Resolve<FFXIVMemory>();
@@ -47,6 +49,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.Combatant
             candidates.Add(container.Resolve<ICombatantMemory70>());
             candidates.Add(container.Resolve<ICombatantMemory71>());
             candidates.Add(container.Resolve<ICombatantMemory72>());
+            candidates.Add(container.Resolve<ICombatantMemory73>());
             memory = FFXIVMemory.FindCandidate(candidates, repository.GetMachinaRegion());
         }
 
@@ -95,6 +98,16 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.Combatant
             }
 
             return memory.GetSelfCombatant();
+        }
+        
+        public void ReturnCombatant(Combatant combatant)
+        {
+            if (!IsValid())
+            {
+                return;
+            }
+
+            memory.ReturnCombatant(combatant);
         }
     }
 }

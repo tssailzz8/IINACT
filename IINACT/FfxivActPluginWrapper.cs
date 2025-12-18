@@ -5,7 +5,6 @@ using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Logging;
 using Dalamud.Plugin.Services;
 using FFXIV_ACT_Plugin;
 using FFXIV_ACT_Plugin.Common;
@@ -17,6 +16,7 @@ using FFXIV_ACT_Plugin.Memory.MemoryReader;
 using FFXIV_ACT_Plugin.Memory.Models;
 using FFXIV_ACT_Plugin.Parse;
 using FFXIV_ACT_Plugin.Resource;
+using IINACT.Network;
 using Machina.FFXIV;
 using Machina.FFXIV.Headers.Opcodes;
 using Microsoft.MinIoC;
@@ -75,15 +75,8 @@ public partial class FfxivActPluginWrapper : IDisposable
         this.condition = condition;
 
         ffxivActPlugin = new FFXIV_ACT_Plugin.FFXIV_ACT_Plugin();
+        Plugin.Log.Information($"Initializing FFXIV_ACT_Plugin version {typeof(FFXIV_ACT_Plugin.FFXIV_ACT_Plugin).Assembly.GetName().Version}");
         ffxivActPlugin.ConfigureIOC();
-        if (dalamudClientLanguage.ToString() == "ChineseSimplified")
-        {
-            OpcodeManager.Instance.SetRegion(GameRegion.Chinese);
-        }
-        else
-        {
-            OpcodeManager.Instance.SetRegion(GameRegion.Global);
-        }
 
         iocContainer = ffxivActPlugin._iocContainer;
         iocContainer.Resolve<ResourceManager>().LoadResources();
@@ -122,7 +115,6 @@ public partial class FfxivActPluginWrapper : IDisposable
         this.chatGui.ChatMessage += OnChatMessage;
         ActGlobals.oFormActMain.BeforeLogLineRead += OFormActMain_BeforeLogLineRead;
         serverTimeProcessor.ServerTime = DateTime.Now;
-        Machina.FFXIV.Dalamud.DalamudClient.GetServerTime = () => (long)GameServerTime.LastSeverTimestamp;
 
         cancellationTokenSource = new CancellationTokenSource();
         scanThread = new Thread(() => ScanMemory(cancellationTokenSource.Token))
@@ -150,7 +142,7 @@ public partial class FfxivActPluginWrapper : IDisposable
             Dalamud.Game.ClientLanguage.English => Language.English,
             Dalamud.Game.ClientLanguage.German => Language.German,
             Dalamud.Game.ClientLanguage.French => Language.French,
-            _ => Language.Chinese
+            _ => dalamudClientLanguage.ToString() == "ChineseSimplified" ? Language.Chinese : Language.English
         };
 
     public void Dispose()
@@ -203,10 +195,7 @@ public partial class FfxivActPluginWrapper : IDisposable
         var line2 = logFormat.FormatMemorySettings(DataCollectionSettings.ProcessID,
                                                    DataCollectionSettings.LogFileFolder,
                                                    DataCollectionSettings.LogAllNetworkData,
-                                                   DataCollectionSettings.DisableCombatLog,
-                                                   DataCollectionSettings.NetworkIP, DataCollectionSettings.UseWinPCap,
-                                                   DataCollectionSettings.UseSocketFilter
-                                                  , DataCollectionSettings.UseDeucalion);
+                                                   DataCollectionSettings.DisableCombatLog);
         logOutput.WriteLine(LogMessageType.Settings, DateTime.MinValue, line2);
 
         logOutput.CallMethod("ConfigureLogFile", null);
@@ -215,7 +204,7 @@ public partial class FfxivActPluginWrapper : IDisposable
         if (!processManager.Verify())
             throw new InvalidOperationException("Game offsets could not be found");
     }
-   
+
     private void OnChatMessage(
         XivChatType type, int senderId, ref SeString sender, ref SeString message, ref bool isHandled)
     {
@@ -259,7 +248,7 @@ public partial class FfxivActPluginWrapper : IDisposable
 
     private static void OnProcessException(DateTime timestamp, string text)
     {
-        DalamudApi.PluginLog.Debug($"[FFXIV_ACT_Plugin] {text}");
+        Plugin.Log.Debug($"[FFXIV_ACT_Plugin] {text}");
     }
 
     [SuppressGCTransition]
@@ -336,7 +325,7 @@ public partial class FfxivActPluginWrapper : IDisposable
             }
             catch (Exception ex)
             {
-                DalamudApi.PluginLog.Error(ex, "[FFXIV_ACT_Plugin] ScanMemory failure");
+                Plugin.Log.Error(ex, "[FFXIV_ACT_Plugin] ScanMemory failure");
             }
         }
     }

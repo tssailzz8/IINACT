@@ -20,18 +20,20 @@ namespace CactbotSelf.内存相关.offset
 		public ulong NetworkAdress = 0;
 		public List<RelativeJump> CallFunctions = new();
 		public List<TableInfo> tableInfos = new();
+        private int opcodeSub = 0;
 		public static int MapeffectOpcode { get; set; }
 		public static int ObjectOpcode { get; set; }
 		public void findNetDown()
 		{
-			var netDown = FindPattern("40 55 56 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 ?? 8B ?? 49 8B ??");
+			var netDown = FindPattern("48 8D 40 20 83 F9 20 72 95 41 8B D7 ");
 			if (netDown.Count >= 1)
 			{
 				NetworkAdress = netDown[0];
 			}
 			else
 			{
-				NetworkAdress = FindPattern("40 53 56 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 ?? 8B F2")[0];
+                //国际服
+				NetworkAdress = FindPattern("40 55 53 56 57 41 55 41 56 41 57 48 8D AC 24 ?? ?? ?? ?? B8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 2B E0 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 85 ?? ?? ?? ?? 45 0F B7 78 ??")[0];
 			}
 			var bytes = ReadBytes(NetworkAdress, 400);
 			var codeReader = new ByteArrayCodeReader(bytes);
@@ -257,7 +259,8 @@ namespace CactbotSelf.内存相关.offset
 			var subs = new List<int>() { };
 			var indirectTables = new List<ulong>();
 			var jumpTables = new List<ulong>();
-
+            uint jumpAdress =0;
+            bool isSub=false;
 			while (codeReader.CanReadByte)
 			{
 				decoder.Decode(out var instr);
@@ -266,37 +269,24 @@ namespace CactbotSelf.内存相关.offset
 					break;
 
 				var instrString = instr.ToString();
+                if (isSub)
+                {
+                    decoder.IP = instr.MemoryDisplacement64;
+                    isSub = false;
+                    continue;
 
-				if (instrString.StartsWith("sub eax,"))
-				{
-					var subValue = instrString.Substring(instrString.IndexOf(',') + 1).Replace("h", "");
-					subs.Add(int.Parse(subValue, NumberStyles.HexNumber));
-					continue;
-				}
-				if (instrString.StartsWith("add eax,"))
-				{
-					var subValue = instrString.Substring(instrString.IndexOf(',') + 1).Replace("h", "");
-					subs.Add(int.Parse(subValue, NumberStyles.HexNumber));
-					continue;
-				}
-				if (instrString.StartsWith("lea eax,["))
-				{
-					var number = instrString.Substring(instrString.LastIndexOf('-') + 1).Replace("]", "").Replace("h", "");
-					subs.Add(int.Parse(number, NumberStyles.HexNumber));
-					continue;
-				}
+                }
+                if (instrString.StartsWith("add"))
+                {
+                    isSub=true;
+                    subs.Add(instr.Immediate8to32);
+                    opcodeSub = unchecked(instr.Immediate8to32);
+                    continue;
+                }
 
-				if (instrString.StartsWith("movzx eax,byte ptr [rdx+rax+"))
-				{
-					indirectTables.Add(instr.NearBranch64);
-					continue;
-				}
 
-				if (instrString.StartsWith("mov ecx,[") && instrString.Contains("+rax*4+"))
-				{
-					jumpTables.Add(instr.NearBranch64);
-				}
-				if (instrString.StartsWith("mov r9d,[") && instrString.Contains("+rax*4+"))
+
+				if (instrString.StartsWith("mov ecx,[rdx+rax*4"))
 				{
 					jumpTables.Add(instr.NearBranch64);
 				}
