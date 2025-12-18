@@ -10,6 +10,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.Combatant
         Combatant GetSelfCombatant();
         Combatant GetCombatantFromAddress(IntPtr address, uint selfCharID);
         List<Combatant> GetCombatantList();
+        void ReturnCombatant(Combatant combatant);
     }
 
     public class CombatantMemoryManager : ICombatantMemory
@@ -21,10 +22,10 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.Combatant
         public CombatantMemoryManager(TinyIoCContainer container)
         {
             this.container = container;
-            container.Register<ICombatantMemory63, CombatantMemory63>();
-            container.Register<ICombatantMemory64, CombatantMemory64>();
-            container.Register<ICombatantMemory65, CombatantMemory65>();
             container.Register<ICombatantMemory70, CombatantMemory70>();
+            container.Register<ICombatantMemory71, CombatantMemory71>();
+            container.Register<ICombatantMemory72, CombatantMemory72>();
+            container.Register<ICombatantMemory73, CombatantMemory73>();
             repository = container.Resolve<FFXIVRepository>();
 
             var memory = container.Resolve<FFXIVMemory>();
@@ -45,10 +46,10 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.Combatant
         public void ScanPointers()
         {
             List<ICombatantMemory> candidates = new List<ICombatantMemory>();
-            candidates.Add(container.Resolve<ICombatantMemory63>());
-            candidates.Add(container.Resolve<ICombatantMemory64>());
-            candidates.Add(container.Resolve<ICombatantMemory65>());
             candidates.Add(container.Resolve<ICombatantMemory70>());
+            candidates.Add(container.Resolve<ICombatantMemory71>());
+            candidates.Add(container.Resolve<ICombatantMemory72>());
+            candidates.Add(container.Resolve<ICombatantMemory73>());
             memory = FFXIVMemory.FindCandidate(candidates, repository.GetMachinaRegion());
         }
 
@@ -97,6 +98,16 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.Combatant
             }
 
             return memory.GetSelfCombatant();
+        }
+        
+        public void ReturnCombatant(Combatant combatant)
+        {
+            if (!IsValid())
+            {
+                return;
+            }
+
+            memory.ReturnCombatant(combatant);
         }
     }
 }

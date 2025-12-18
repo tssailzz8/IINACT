@@ -1,11 +1,15 @@
 using System.Diagnostics;
 using System.Reflection;
+using Dalamud.Game;
 using Dalamud.Game.Command;
 using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using IINACT.Network;
 using IINACT.Windows;
+using Machina.FFXIV;
+using Machina.FFXIV.Headers.Opcodes;
 
 namespace IINACT;
 
@@ -21,16 +25,21 @@ public sealed class Plugin : IDalamudPlugin
     
     internal IDalamudPluginInterface PluginInterface { get; }
     internal ICommandManager CommandManager { get; }
-    internal IGameNetwork GameNetwork { get; }
     internal IClientState ClientState { get; }
     internal IDataManager DataManager { get; }
     internal IChatGui ChatGui { get; }
+    internal IFramework Framework { get; }
+    internal ICondition Condition { get; }
+    internal IGameInteropProvider GameInteropProvider { get; }
+    internal ISigScanner SigScanner { get; }
+    internal INotificationManager NotificationManager { get; }
     public static IPluginLog Log { get; private set; } = null!;
 
     internal Configuration Configuration { get; }
     private TextToSpeechProvider TextToSpeechProvider { get; }
     private MainWindow MainWindow { get; }
     internal FileDialogManager FileDialogManager { get; }
+    private ZoneDownHookManager ZoneDownHookManager { get; }
     private IpcProviders IpcProviders { get; }
 
     private FfxivActPluginWrapper FfxivActPluginWrapper { get; }
@@ -42,24 +51,37 @@ public sealed class Plugin : IDalamudPlugin
 
     public Plugin(IDalamudPluginInterface pluginInterface,
                   ICommandManager commandManager,
-                  IGameNetwork gameNetwork,
                   IClientState clientState,
                   IDataManager dataManager,
                   IChatGui chatGui,
-                  IPluginLog pluginLog)
+                  IFramework framework,
+                  ICondition condition,
+                  IPluginLog pluginLog,
+                  IGameInteropProvider gameInteropProvider,
+                  ISigScanner sigScanner,
+                  INotificationManager notificationManager)
     {
         PluginInterface = pluginInterface;
         CommandManager = commandManager;
-        GameNetwork = gameNetwork;
         DataManager = dataManager;
         ClientState = clientState;
         ChatGui = chatGui;
+        Framework = framework;
+        Condition = condition;
+        GameInteropProvider = gameInteropProvider;
+        SigScanner = sigScanner;
+        NotificationManager = notificationManager;
         Log = pluginLog;
 
+        OpcodeManager.Instance.SetRegion(DataManager.Language.ToString() == "ChineseSimplified"
+                                             ? GameRegion.Chinese
+                                             : GameRegion.Global);
+
+        var createZoneDownHookManager = Task.Run(() 
+            => new ZoneDownHookManager(NotificationManager, GameInteropProvider));
         Version = Assembly.GetExecutingAssembly().GetName().Version!;
 
         FileDialogManager = new FileDialogManager();
-        Machina.FFXIV.Dalamud.DalamudClient.GameNetwork = GameNetwork;
 
         HttpClient = new HttpClient();
         
@@ -72,6 +94,7 @@ public sealed class Plugin : IDalamudPlugin
         PluginLogTraceListener = new PluginLogTraceListener();
         Trace.Listeners.Add(PluginLogTraceListener);
 
+        Advanced_Combat_Tracker.ActGlobals.Init();
         Advanced_Combat_Tracker.ActGlobals.oFormActMain = new Advanced_Combat_Tracker.FormActMain(Log);
 
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
@@ -80,7 +103,7 @@ public sealed class Plugin : IDalamudPlugin
         this.TextToSpeechProvider = new TextToSpeechProvider();
         Advanced_Combat_Tracker.ActGlobals.oFormActMain.LogFilePath = Configuration.LogFilePath;
 
-        FfxivActPluginWrapper = new FfxivActPluginWrapper(Configuration, DataManager.Language, ChatGui);
+        FfxivActPluginWrapper = new FfxivActPluginWrapper(Configuration, DataManager.Language, ChatGui, Framework, Condition);
         OverlayPlugin = InitOverlayPlugin();
 
         IpcProviders = new IpcProviders(PluginInterface);
@@ -101,8 +124,16 @@ public sealed class Plugin : IDalamudPlugin
 
         PluginInterface.UiBuilder.Draw += DrawUI;
         PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+        
+        if (clientState.IsPvP)
+            EnterPvP();
+        else
+            LeavePvP();
+        
         ClientState.EnterPvP += EnterPvP;
         ClientState.LeavePvP += LeavePvP;
+
+        ZoneDownHookManager = createZoneDownHookManager.Result;
     }
 
     public void Dispose()
@@ -110,6 +141,7 @@ public sealed class Plugin : IDalamudPlugin
         ClientState.EnterPvP -= EnterPvP;
         ClientState.LeavePvP -= LeavePvP;
         IpcProviders.Dispose();
+        ZoneDownHookManager.Dispose();
         
         FfxivActPluginWrapper.Dispose();
         OverlayPlugin.DeInitPlugin();
@@ -121,6 +153,8 @@ public sealed class Plugin : IDalamudPlugin
 
         CommandManager.RemoveHandler(MainWindowCommandName);
         CommandManager.RemoveHandler(EndEncCommandName);
+
+        Advanced_Combat_Tracker.ActGlobals.Dispose();
     }
 
     private RainbowMage.OverlayPlugin.PluginMain InitOverlayPlugin()

@@ -3,11 +3,11 @@ using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
 using FFXIV_ACT_Plugin.Config;
-using ImGuiNET;
 using RainbowMage.OverlayPlugin;
 using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
@@ -89,7 +89,8 @@ public class MainWindow : Window, IDisposable
         }
 
         var selectedOverlay = OverlayPresets?[selectedOverlayIndex];
-        var overlayUri = selectedOverlay?.ToOverlayUri(new Uri($"ws://{Server?.Address}:{Server?.Port}/ws"));
+        Uri.TryCreate($"ws://{Server?.Address}:{Server?.Port}/ws", UriKind.Absolute, out var webSocketServer);
+        var overlayUri = selectedOverlay?.ToOverlayUri(webSocketServer);
         var overlayUriString = overlayUri?.ToString() ?? "<Error generating URI>";
 
         ImGui.SetNextItemWidth(comboWidth);

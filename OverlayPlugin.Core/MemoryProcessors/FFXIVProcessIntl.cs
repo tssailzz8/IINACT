@@ -8,26 +8,31 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
 {
     public class FFXIVProcessIntl : FFXIVProcess
     {
-        // Last updated for FFXIV 6.4
+        // Last updated for FFXIV 7.3
+        // Per aers/FFXIVClientStructs, what we call EntityMemory is actually:
+        // Client::Game::Character::Character (0x22E0)
+        //   Client::Game::Object::GameObject (0x190)
+        //   Client::Game::Character::CharacterData (0x50)
+        //   ...
 
         [StructLayout(LayoutKind.Explicit)]
         public unsafe struct EntityMemory
         {
             public static int Size => Marshal.SizeOf(typeof(EntityMemory));
 
-            // Unknown size, but this is the bytes up to the next field.
-            public const int nameBytes = 68;
+            // 64 bytes per both OverlayPlugin & aers/FFXIVClientStructs
+            public const int nameBytes = 64;
 
             [FieldOffset(0x30)]
             public fixed byte Name[nameBytes];
 
-            [FieldOffset(0x74)]
+            [FieldOffset(0x78)]
             public uint id;
 
-            [FieldOffset(0x8C)]
+            [FieldOffset(0x90)]
             public EntityType type;
 
-            [FieldOffset(0x92)]
+            [FieldOffset(0x96)]
             public ushort distance;
 
             [FieldOffset(0xB0)]
@@ -42,42 +47,42 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             [FieldOffset(0xC0)]
             public Single rotation;
 
-            [FieldOffset(0x1BC)]
+            [FieldOffset(0x1A0)]
             public CharacterDetails charDetails;
-
-            [FieldOffset(0x1E6)]
-            public byte shieldPercentage;
         }
 
         [StructLayout(LayoutKind.Explicit)]
         public struct CharacterDetails
         {
-            [FieldOffset(0x00)]
+            [FieldOffset(0x0C)]
             public int hp;
 
-            [FieldOffset(0x04)]
+            [FieldOffset(0x10)]
             public int max_hp;
 
-            [FieldOffset(0x08)]
+            [FieldOffset(0x14)]
             public short mp;
 
-            [FieldOffset(0x10)]
+            [FieldOffset(0x1C)]
             public short gp;
 
-            [FieldOffset(0x12)]
+            [FieldOffset(0x1E)]
             public short max_gp;
 
-            [FieldOffset(0x14)]
+            [FieldOffset(0x20)]
             public short cp;
 
-            [FieldOffset(0x16)]
+            [FieldOffset(0x22)]
             public short max_cp;
 
-            [FieldOffset(0x1E)]
+            [FieldOffset(0x2A)]
             public EntityJob job;
 
-            [FieldOffset(0x1F)]
+            [FieldOffset(0x2B)]
             public byte level;
+            
+            [FieldOffset(0x2E)]
+            public byte shieldPercentage;
         }
 
         public FFXIVProcessIntl(TinyIoCContainer container) : base(container) { }
@@ -105,7 +110,8 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
         // In combat boolean.
         // This address is written to by "mov [rax+rcx],bl" and has three readers.
         // This reader is "cmp byte ptr [ffxiv_dx11.exe+????????],00 { (0),0 }"
-        private static String kInCombatSignature = "803D??????????74??488B03488BCBFF50";
+        // Updated in 7.3, signature was no longer unique, include the preceeding "jz LAB_?????????"
+        private static String kInCombatSignature = "74??803D??????????74??488B03488BCBFF50";
         private static int kInCombatSignatureOffset = -15;
 
         private static bool kInCombatSignatureRIP = true;
@@ -204,7 +210,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
                     // This doesn't exist in memory, so just send the right value.
                     // As there are other versions that still have it, don't change the event.
                     entity.max_mp = 10000;
-                    entity.shield_value = mem.shieldPercentage * entity.max_hp / 100;
+                    entity.shield_value = mem.charDetails.shieldPercentage * entity.max_hp / 100;
 
                     if (IsGatherer(entity.job))
                     {
@@ -297,6 +303,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
                     EntityJob.SAM => JObject.FromObject(*(SamuraiJobMemory*)&p[0]),
                     EntityJob.SGE => JObject.FromObject(*(SageJobMemory*)&p[0]),
                     EntityJob.RPR => JObject.FromObject(*(ReaperJobMemory*)&p[0]),
+                    EntityJob.VPR => JObject.FromObject(*(ViperJobMemory*)&p[0]),
                     EntityJob.PCT => JObject.FromObject(*(PictomancerJobMemory*)&p[0]),
                     _ => null
                 };
@@ -544,9 +551,6 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
         public struct ThaumaturgeJobMemory
         {
             [FieldOffset(0x02)]
-            public ushort umbralMilliseconds; // Number of ms left in umbral fire/ice.
-
-            [FieldOffset(0x04)]
             public sbyte umbralStacks; // Positive = Umbral Fire Stacks, Negative = Umbral Ice Stacks.
         };
 
@@ -565,24 +569,27 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             public ushort nextPolyglotMilliseconds; // Number of ms left before polyglot proc.
 
             [FieldOffset(0x02)]
-            public ushort umbralMilliseconds; // Number of ms left in umbral fire/ice.
-
-            [FieldOffset(0x04)]
             public sbyte umbralStacks; // Positive = Umbral Fire Stacks, Negative = Umbral Ice Stacks.
 
-            [FieldOffset(0x05)]
+            [FieldOffset(0x03)]
             public byte umbralHearts;
 
-            [FieldOffset(0x06)]
+            [FieldOffset(0x04)]
             public byte polyglot;
 
             [NonSerialized]
-            [FieldOffset(0x07)]
+            [FieldOffset(0x05)]
             private EnochianFlags enochian_state;
 
             public bool enochian => enochian_state.HasFlag(EnochianFlags.Enochian);
 
             public bool paradox => enochian_state.HasFlag(EnochianFlags.Paradox);
+            
+            public int astralSoulStacks {
+                get {
+                    return ((int)enochian_state >> 2) & 0x7; // = 0b111, to get the last 3 bits.
+                }
+            }
         };
 
         [StructLayout(LayoutKind.Explicit)]
@@ -604,67 +611,109 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             [FieldOffset(0x04)]
             public byte aetherflowStacks;
         };
-
+        
         [StructLayout(LayoutKind.Explicit)]
-        public struct SummonerJobMemory
-        {
-            [FieldOffset(0x00)]
-            public ushort tranceMilliseconds;
+         public struct SummonerJobMemory {
+           public enum ActiveArcanum : byte {
+             None = 0,
+             Ifrit = 1,
+             Titan = 2,
+             Garuda = 3,
+           }
 
-            [FieldOffset(0x02)]
-            public ushort attunementMilliseconds;
+           [Flags]
+           public enum Stance : byte {
+             None = 0,
+             // 0-1 bits: AetherFlows
+             AetherFlow1 = 1 << 0,
+             AetherFlow2 = 1 << 1,
+             AetherFlow3 = AetherFlow1 | AetherFlow2,
+             // 2 bit: Phoenix Ready
+             Phoenix = 1 << 2,
+             // 3 bit: Solar Bahamut Ready
+             // FIXME: guessed, not tested
+             SolarBahamut = 1 << 3,
+             // 4 bit: Unknown
+             // 5-7 bits: Usable Arcanum
+             Ruby = 1 << 5, // Fire/Ifrit
+             Topaz = 1 << 6, // Earth/Titan
+             Emerald = 1 << 7, // Wind/Garuda
+           }
 
-            [FieldOffset(0x06)]
-            public byte attunement;
+           [FieldOffset(0x00)]
+           public ushort tranceMilliseconds;
 
-            [NonSerialized]
-            [FieldOffset(0x07)]
-            private byte stance;
+           [FieldOffset(0x02)]
+           public ushort attunementMilliseconds;
 
-            public string[] usableArcanum
-            {
-                get
-                {
-                    var arcanums = new List<string>();
-                    if ((stance & 0x20) != 0)
-                        arcanums.Add("Ruby"); // Fire/Ifrit
-                    if ((stance & 0x40) != 0)
-                        arcanums.Add("Topaz"); // Earth/Titan
-                    if ((stance & 0x80) != 0)
-                        arcanums.Add("Emerald"); // Wind/Garuda
+           /// <summary>
+           /// 0x04: 0x17 = Summoned other than Carbuncle, 0x00 = Other Condition
+           /// </summary>
+           [NonSerialized]
+           [FieldOffset(0x04)]
+           private byte _summonStatus;
 
-                    return arcanums.ToArray();
-                }
-            }
+           /// <summary>
+           /// (From right to left)
+           /// 1-2 bits: Active Primal
+           /// 3-5 bits: Counts of Attunement Stacks
+           [NonSerialized]
+           [FieldOffset(0x06)]
+           private byte _attunement;
 
-            public string activePrimal
-            {
-                get
-                {
-                    if ((stance & 0xC) == 0x4)
-                        return "Ifrit";
-                    else if ((stance & 0xC) == 0x8)
-                        return "Titan";
-                    else if ((stance & 0xC) == 0xC)
-                        return "Garuda";
-                    else
-                        return null;
-                }
-            }
+           [NonSerialized]
+           [FieldOffset(0x07)]
+           private Stance stance;
 
-            public String nextSummoned
-            {
-                get
-                {
-                    if ((stance & 0x10) == 0)
-                        return "Bahamut";
-                    else
-                        return "Phoenix";
-                }
-            }
+           public bool summonStatus {
+             get {
+               return _summonStatus != 0;
+             }
+           }
 
-            public int aetherflowStacks => stance & 0x3;
-        };
+           public int attunement {
+             get {
+               return (_attunement >> 2) & 0x7; // = 0b111, to get the last 3 bits.
+             }
+           }
+
+           public string activePrimal {
+             get {
+               return ((ActiveArcanum)(_attunement & 0x3)).ToString();
+             }
+           }
+
+           public string[] usableArcanum {
+             get {
+               var arcanums = new List<string>();
+               foreach (var flag in new List<Stance> { Stance.Ruby, Stance.Topaz, Stance.Emerald }) {
+                 if (stance.HasFlag(flag))
+                   arcanums.Add(flag.ToString());
+               }
+
+               return arcanums.ToArray();
+             }
+           }
+
+           public string nextSummoned {
+             get {
+               foreach (var flag in new List<Stance> { Stance.SolarBahamut, Stance.Phoenix }) {
+                 if (stance.HasFlag(flag))
+                   return flag.ToString();
+               }
+               return "Bahamut";
+             }
+           }
+
+           public int aetherflowStacks {
+             get {
+               return stance.HasFlag(Stance.AetherFlow3) ? 3 :
+                      stance.HasFlag(Stance.AetherFlow2) ? 2 :
+                      stance.HasFlag(Stance.AetherFlow1) ? 1 :
+                      0;
+             }
+           }
+         };
 
         [StructLayout(LayoutKind.Explicit)]
         public struct ScholarJobMemory
@@ -690,9 +739,9 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             public enum Beast : byte
             {
                 None = 0,
-                Coeurl = 1,
-                Opo = 2,
-                Raptor = 3,
+                Opo = 1,
+                Raptor = 2,
+                Coeurl = 3,
             }
 
             [FieldOffset(0x00)]
@@ -712,7 +761,14 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
 
             [NonSerialized]
             [FieldOffset(0x04)]
+            private byte Fury;
+
+            [NonSerialized]
+            [FieldOffset(0x05)]
             private byte Nadi;
+            
+            [FieldOffset(0x06)]
+            public ushort MasterfulReadyMilisecond;
 
             public string[] beastChakra
             {
@@ -738,10 +794,28 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
             {
                 get
                 {
-                    if ((Nadi & 0x2) == 0x2)
+                    if ((Nadi & 0x1) == 0x1)
                         return true;
                     else
                         return false;
+                }
+            }
+            
+            public int opoopoFury {
+                get {
+                    return Fury & 0x3;
+                }
+            }
+
+            public int raptorFury {
+                get {
+                    return (Fury >> 2) & 0x3;
+                }
+            }
+
+            public int coeurlFury {
+                get {
+                    return (Fury >> 4) & 0x3;
                 }
             }
         };
@@ -785,42 +859,52 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
                 Spear = 4,
                 Ewer = 5,
                 Spire = 6,
-                Lord = 0x70,
-                Lady = 0x80,
-            }
-
-            public enum Arcanum : byte
-            {
-                None = 0,
-                Solar = 1,
-                Lunar = 2,
-                Celestial = 3,
+                Lord = 7,
+                Lady = 8,
             }
 
             [NonSerialized]
-            [FieldOffset(0x05)]
-            private byte _heldCard;
+            [FieldOffset(0x00)]
+            private ushort _card;
 
             [NonSerialized]
-            [FieldOffset(0x06)]
-            private byte _arcanumsmix;
+            [FieldOffset(0x02)]
+            private byte _nextdraw;
 
-            public string heldCard => ((Card)(_heldCard & 0xF)).ToString();
+            public string card1 {
+                get {
+                    return ((Card)(_card & 0xF)).ToString();
+                }
+            }
 
-            public string crownCard => ((Card)(_heldCard & 0xF0)).ToString();
+            public string card2 {
+                get {
+                    return ((Card)((_card >> 4) & 0xF)).ToString();
+                }
+            }
 
-            public string[] arcanums
-            {
-                get
-                {
-                    var _arcanums = new List<Arcanum>();
-                    for (var i = 0; i < 3; i++)
+            public string card3 {
+                get {
+                    return ((Card)((_card >> 8) & 0xF)).ToString();
+                }
+            }
+
+            public string card4 {
+                get {
+                    return ((Card)((_card >> 12) & 0xF)).ToString();
+                }
+            }
+
+            public string nextdraw {
+                get {
+                    if (_nextdraw == 0)
                     {
-                        var arcanum = (_arcanumsmix >> 2 * i) & 0x3;
-                        _arcanums.Add((Arcanum)arcanum);
+                        return "Astral";
+                    } else
+                    {
+                        return "Umbral";
                     }
 
-                    return _arcanums.Select(a => a.ToString()).Where(a => a != "None").ToArray();
                 }
             }
         };
@@ -878,6 +962,45 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
 
             [FieldOffset(0x05)]
             public byte voidShroud;
+        }
+        
+        [StructLayout(LayoutKind.Explicit)]
+        public struct ViperJobMemory {
+            public enum AdvancedCombo : byte {
+                Vicewinder = 1,
+                HuntersCoil = 2,
+                SwiftskinsCoil = 3,
+                Vicepit = 4,
+                HuntersDen = 5,
+                SwiftskinsDen = 6,
+                Reawaken = 7,
+                FirstGeneration = 8,
+                SecondGeneration = 9,
+                ThirdGeneration = 10,
+                FourthGeneration = 11,
+            }
+
+            [FieldOffset(0x00)]
+            public byte rattlingCoilStacks;
+
+            [FieldOffset(0x01)]
+            public byte anguineTribute;
+
+            [FieldOffset(0x02)]
+            public byte serpentOffering;
+
+            [NonSerialized]
+            [FieldOffset(0x03)]
+            private AdvancedCombo _advancedCombo;
+
+            public string advancedCombo {
+                get {
+                    return _advancedCombo.ToString();
+                }
+            }
+
+            [FieldOffset(0x06)]
+            public ushort reawakenedTimer;
         }
 
         [StructLayout(LayoutKind.Explicit)]
