@@ -91,6 +91,10 @@ public sealed class Plugin : IDalamudPlugin
                                              ? GameRegion.Chinese
                                              : GameRegion.Global);
 
+        OpcodeManager.Instance.SetRegion(DataManager.Language.ToString() == "ChineseSimplified"
+                                             ? GameRegion.Chinese
+                                             : GameRegion.Global);
+
         var createZoneDownHookManager = Task.Run(() 
             => new ZoneDownHookManager(NotificationManager, GameInteropProvider));
         Version = Assembly.GetExecutingAssembly().GetName().Version!;
