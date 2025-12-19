@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0-windows</TargetFramework>
+        <TargetFramework>net10.0-windows7.0</TargetFramework>
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
         <Nullable>enable</Nullable>
         <UseWindowsForms>true</UseWindowsForms>
@@ -19,7 +19,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Datatypes\"/>
+        <Folder Include="Datatypes\" />
     </ItemGroup>
 
     <PropertyGroup>

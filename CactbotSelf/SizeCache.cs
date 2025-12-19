@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
@@ -23,41 +23,6 @@ namespace CactbotSelf
 
 		private static int[] _fieldsizes;
 
-		public static int[] FieldSizes
-		{
-			get
-			{
-
-				if (_fieldsizes != null)
-					return _fieldsizes;
-
-
-				var fields = Type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-				_fieldsizes = new int[fields.Length];
-				int i = 0;
-				foreach (var field in fields)
-				{
-					var attr = field.GetCustomAttributes(typeof(FixedBufferAttribute), false);
-
-					if (attr.Length > 0)
-					{
-						var fba = (FixedBufferAttribute)attr[0];
-						var size = GetSizeOf(fba.ElementType) * fba.Length;
-						_fieldsizes[i] = size;
-					}
-					else
-					{
-						var size = GetSizeOf(field.FieldType);
-						_fieldsizes[i] = size;
-					}
-
-					i++;
-				}
-
-
-				return _fieldsizes;
-			}
-		}
 
 		public static readonly GetUnsafePtrDelegate GetUnsafePtr;
 

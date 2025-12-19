@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net9.0-windows</TargetFramework>
+        <TargetFramework>net10.0-windows7.0</TargetFramework>
         <EnableWindowsTargeting>true</EnableWindowsTargeting>
         <OutputType>Library</OutputType>
         <RootNamespace>RainbowMage.OverlayPlugin</RootNamespace>
@@ -34,10 +34,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
-        <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0"/>
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\NotACT\NotACT.csproj"/>
+        <ProjectReference Include="..\NotACT\NotACT.csproj" />
     </ItemGroup>
 </Project>

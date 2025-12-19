@@ -4,12 +4,12 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Windowing;
-using ImGuiNET;
 using RainbowMage.OverlayPlugin;
 using FFXIV_ACT_Plugin.Config;
 using Advanced_Combat_Tracker;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Utility;
+using Dalamud.Bindings.ImGui;
 
 namespace IINACT.Windows;
 
