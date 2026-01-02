@@ -1,4 +1,4 @@
-﻿<Project Sdk="Dalamud.NET.Sdk/14.0.1">
+﻿<Project Sdk="Dalamud.CN.NET.Sdk/14.0.0">
     <PropertyGroup>
         <Authors>Usagi</Authors>
         <Company>Dezent</Company>
@@ -34,7 +34,6 @@
         </PackageReference>
         <PackageReference Include="NAudio" Version="2.2.1" />
         <PackageReference Include="System.Speech" Version="10.0.0" />
-        <PackageReference Include="Unscrambler.XIV" Version="7.40.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -80,12 +79,19 @@
             <HintPath>..\external_dependencies\SDK\FFXIV_ACT_Plugin.Resource.dll</HintPath>
             <Private>False</Private>
         </Reference>
+        <Reference Include="Unscrambler">
+          <HintPath>..\..\..\c#\Unscrambler\Unscrambler\bin\Release\net10.0\Unscrambler.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup>
         <Content Include="..\external_dependencies\SafeMemoryReader.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="DalamudPackager" Version="14.0.1" />
     </ItemGroup>
 
 </Project>

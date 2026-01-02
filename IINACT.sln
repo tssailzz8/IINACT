@@ -17,13 +17,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Machina", "machina\Machina\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Machina.FFXIV", "machina\Machina.FFXIV\Machina.FFXIV.csproj", "{1AAD30B3-55ED-4C10-94BF-41889B6BD44A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostNamazu", "..\..\net11\IINACT\PostNamazu\PostNamazu.csproj", "{C71E1B01-25A2-5F84-7DD8-847A86909D68}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostNamazu", "PostNamazu\PostNamazu.csproj", "{C71E1B01-25A2-5F84-7DD8-847A86909D68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostNamazu.OverlayHoster", "..\..\net11\IINACT\PostNamazu.OverlayHoster\PostNamazu.OverlayHoster.csproj", "{8D1A294D-E888-E835-415F-C4AFCAFB5C70}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostNamazu.OverlayHoster", "PostNamazu.OverlayHoster\PostNamazu.OverlayHoster.csproj", "{8D1A294D-E888-E835-415F-C4AFCAFB5C70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTS", "..\..\net11\IINACT\tts\TTS.csproj", "{1B6BDF59-6DB8-1FE4-E081-6BFD537F53BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TTS", "tts\TTS.csproj", "{1B6BDF59-6DB8-1FE4-E081-6BFD537F53BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CactbotSelf", "..\..\net11\IINACT\CactbotSelf\CactbotSelf.csproj", "{4BFAA372-4D85-A7AE-5F5C-87CE7C870732}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CactbotSelf", "CactbotSelf\CactbotSelf.csproj", "{4BFAA372-4D85-A7AE-5F5C-87CE7C870732}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +31,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{260F5F39-62F5-40B6-B2B5-5FCE80363DA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{260F5F39-62F5-40B6-B2B5-5FCE80363DA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{260F5F39-62F5-40B6-B2B5-5FCE80363DA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{260F5F39-62F5-40B6-B2B5-5FCE80363DA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{260F5F39-62F5-40B6-B2B5-5FCE80363DA7}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{260F5F39-62F5-40B6-B2B5-5FCE80363DA7}.Debug|Any CPU.Build.0 = Debug|x64
+		{260F5F39-62F5-40B6-B2B5-5FCE80363DA7}.Release|Any CPU.ActiveCfg = Release|x64
+		{260F5F39-62F5-40B6-B2B5-5FCE80363DA7}.Release|Any CPU.Build.0 = Release|x64
 		{0DCFADA7-DBF4-476E-9B15-5C5DE32DCBA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0DCFADA7-DBF4-476E-9B15-5C5DE32DCBA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DCFADA7-DBF4-476E-9B15-5C5DE32DCBA6}.Release|Any CPU.ActiveCfg = Release|Any CPU

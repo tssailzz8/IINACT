@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -104,7 +104,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors.JobGauge
         public void ScanPointers()
         {
             List<IJobGaugeMemory> candidates = new List<IJobGaugeMemory>();
-            candidates.Add(container.Resolve<IJobGaugeMemory655>());
+          
             candidates.Add(container.Resolve<IJobGaugeMemory74>());
             memory = FFXIVMemory.FindCandidate(candidates, repository.GetMachinaRegion());
         }

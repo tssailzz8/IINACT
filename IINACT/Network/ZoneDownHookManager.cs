@@ -1,9 +1,11 @@
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Dalamud.Hooking;
 using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Plugin.Services;
+using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
 using Unscrambler;
 using Unscrambler.Constants;
 using Unscrambler.Unscramble;
@@ -13,7 +15,26 @@ namespace IINACT.Network;
 
 public unsafe class ZoneDownHookManager : IDisposable
 {
-	private const string GenericDownSignature = "E8 ?? ?? ?? ?? 4C 8B 4F 10 8B 47 1C 45";
+    [StructLayout(LayoutKind.Sequential)]
+    public struct DataSegment
+    {
+        public ushort opcode;
+        public ushort dataLength;
+        public uint ms;
+        public uint objectID;
+
+        public uint Length => (uint)sizeof(DataSegment) + dataLength;
+
+        public byte* Data
+        {
+            get
+            {
+                fixed (void* ptr = &this)
+                    return (byte*)ptr + sizeof(DataSegment);
+            }
+        }
+    }
+    private const string GenericDownSignature = "E8 ?? ?? ?? ?? 4C 8B 4F 10 8B 47 1C 45";
     private const string OpcodeKeyTableSignature = "?? ?? ?? 2B C8 ?? 8B ?? 8A ?? ?? ?? ?? 41 81";
     private readonly int[] opcodeKeyTable;
     private readonly byte[] keys = new byte[3];
@@ -28,7 +49,9 @@ public unsafe class ZoneDownHookManager : IDisposable
     private readonly VersionConstants versionConstants;
     private readonly IUnscrambler unscrambler;
 
-	public ZoneDownHookManager(
+
+
+    public ZoneDownHookManager(
         INotificationManager notificationManager,
 		IGameInteropProvider hooks)
     {
@@ -38,13 +61,13 @@ public unsafe class ZoneDownHookManager : IDisposable
         var moduleBase = multiScanner.Module.BaseAddress;
         
         var version = GetRunningGameVersion();
-        if (VersionConstants.Constants.ContainsKey(version))
-        {
-            versionConstants = VersionConstants.ForGameVersion(version);
-            unscrambler = UnscramblerFactory.ForGameVersion(version);
-        }
-        else
-        {
+        //if (!VersionConstants.Constants.ContainsKey(version))
+        //{
+        //    versionConstants = VersionConstants.ForGameVersion(version);
+        //    unscrambler = UnscramblerFactory.ForGameVersion(version);
+        //}
+        //else
+        //{
             Plugin.Log.Warning("[ZoneDownHookManager] Creating fallback Unscrambler constants dynamically");
             var onReceivePacketAddress = PacketDispatcher.GetOnReceivePacketAddress();
             Plugin.Log.Debug($"[ZoneDownHookManager] GetOnReceivePacketAddress: {onReceivePacketAddress:X}");
@@ -56,24 +79,24 @@ public unsafe class ZoneDownHookManager : IDisposable
             var searchRange = 0x1000;
             var memory = new byte[searchRange];
             Marshal.Copy(opcodeKeyTableAddress, memory, 0, searchRange);
-            var opcodeKeyTableSize = 0;
-            while (!IsVtablePattern(memory, opcodeKeyTableSize))
-            {
-                opcodeKeyTableSize += 4;
-                if (opcodeKeyTableSize > searchRange)
-                    throw new Exception("Opcode key table size is too large");
-            }
-            if (memory[opcodeKeyTableSize - 1] == 0 && memory[opcodeKeyTableSize - 2] == 0 && memory[opcodeKeyTableSize - 3] == 0 && memory[opcodeKeyTableSize - 4] == 0)
-            {
-                Plugin.Log.Debug("Uneven padded length for opcode key table");
-                opcodeKeyTableSize -= 4;
-            }
-            Plugin.Log.Debug(
-                $"[ZoneDownHookManager] opcodeKeyTableOffset {opcodeKeyTableOffset:X}, opcodeKeyTableSize {opcodeKeyTableSize:X}");
+            var opcodeKeyTableSize = bytes[2]*4;
+            //while (!IsVtablePattern(memory, opcodeKeyTableSize))
+            //{
+            //    opcodeKeyTableSize += 4;
+            //    if (opcodeKeyTableSize > searchRange)
+            //        throw new Exception("Opcode key table size is too large");
+            //}
+            //if (memory[opcodeKeyTableSize - 1] == 0 && memory[opcodeKeyTableSize - 2] == 0 && memory[opcodeKeyTableSize - 3] == 0 && memory[opcodeKeyTableSize - 4] == 0)
+            //{
+            //    Plugin.Log.Debug("Uneven padded length for opcode key table");
+            //    opcodeKeyTableSize -= 4;
+            //}
+            //Plugin.Log.Debug(
+            //    $"[ZoneDownHookManager] opcodeKeyTableOffset {opcodeKeyTableOffset:X}, opcodeKeyTableSize {opcodeKeyTableSize:X}");
             versionConstants = GetFallbackVersionConstant(opcodeKeyTableOffset, opcodeKeyTableSize);
             unscrambler = new Unscrambler73();
             unscrambler.Initialize(versionConstants);
-        }
+        //}
         
         var rawOpcodeKeyTable = new byte[versionConstants.OpcodeKeyTableSize];
         opcodeKeyTable = new int[rawOpcodeKeyTable.Length / 4];
@@ -84,9 +107,11 @@ public unsafe class ZoneDownHookManager : IDisposable
         var rxPtrs = multiScanner.ScanText(GenericDownSignature, 3);
 		zoneDownHook = hooks.HookFromAddress<DownPrototype>(rxPtrs[2], ZoneDownDetour);
 
-		Enable();
+        Enable();
     }
-    
+
+
+
     private bool IsVtablePattern(ReadOnlySpan<byte> memory, int offset)
     {
         for (var i = 0; i < 5; i++)
@@ -110,7 +135,9 @@ public unsafe class ZoneDownHookManager : IDisposable
     {
         UpdateKeys();
 		zoneDownHook?.Enable();
-	}
+
+
+    }
     
     private void UpdateKeys()
     {
@@ -149,13 +176,16 @@ public unsafe class ZoneDownHookManager : IDisposable
 	public void Disable()
 	{
 		zoneDownHook?.Disable();
-	}
+
+
+    }
 	
 	public void Dispose()
 	{
 		Disable();
 		zoneDownHook?.Dispose();
-	}
+
+    }
     
     private void SendNotification(string content)
     {
@@ -245,6 +275,23 @@ public unsafe class ZoneDownHookManager : IDisposable
     private static void EnqueueToMachina(ReadOnlySpan<byte> data)
     {
         var queue = Machina.FFXIV.Dalamud.DalamudClient.MessageQueue;
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < data.Length; i += 4)
+        {
+            if (i > 0) sb.Append('|');
+
+            // 计算当前要取的长度（防止最后不足4字节越界）
+            int length = Math.Min(4, data.Length - i);
+
+            // 使用 Slice 切片，这不会复制内存
+            ReadOnlySpan<byte> slice = data.Slice(i, length);
+
+            // .NET 5+ 支持直接把 Span 转 Hex
+            sb.Append(Convert.ToHexString(slice));
+        }
+        //DalamudApi.LogInfo(sb.ToString());
         queue?.Enqueue((GameServerTime.LastSeverTimestamp, data.ToArray()));
     }
     

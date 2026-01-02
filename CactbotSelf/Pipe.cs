@@ -26,7 +26,7 @@ namespace CactbotSelf
 		private static BackgroundWorker _processSwitcher;
 		private  void InitPipeClient()
 		{
-			var pipeName = $"DDD";
+			var pipeName = $"ppex.ipc.ffxiv_{Process.GetCurrentProcess().Id}";
 			pipeClient = new PipeClient<string>(pipeName);
 			RestartPipeClient();
 

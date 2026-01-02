@@ -20,7 +20,7 @@ namespace PostNamazu.Actions
             base.GetOffsets();
 
 
-            var mapIDOffset = SigScanner.Read<UInt16>(SigScanner.ScanText("44 89 81 ? ? ? ? 0F B7 84 24") + 3);
+            var mapIDOffset = SigScanner.Read<UInt16>(SigScanner.ScanText("66 89 81 ? ? ? ? 66 85 C0 74 ?") + 3);
             MapIDPtr = SigScanner.GetStaticAddressFromSig("48 8D 0D ?? ?? ?? ?? 0F B6 55 ?? 24") + mapIDOffset;
         }
 
