@@ -45,31 +45,11 @@
         "resolved": "10.0.0",
         "contentHash": "nHlCdjoeReiSx4kzgPEwPRlbOAyuVFwndXTZZT+CLnHb8UIfB+YMgpQjQ7faYvs3xU8wyvpb6dt+U+HwdlbG7w=="
       },
-      "H.Formatters": {
-        "type": "Transitive",
-        "resolved": "14.0.0",
-        "contentHash": "KTntyVgEB0x/bk03X2tVBj0IamZ6ZhUSJrPfIGCJC5EE8MTYWC3MtUwQoP00Sx7wXVKWKp4wLe8/X8+a5KMoGg=="
-      },
-      "H.Formatters.System.Text.Json": {
-        "type": "Transitive",
-        "resolved": "14.0.0",
-        "contentHash": "949kekazBKt9CqpX/2q0l6VLydxnkWvgCoMOhM3bWY/cQIR40fQOXLbIybz+d/R5Kft310tOCgMLrBE8NYZIBg==",
-        "dependencies": {
-          "H.Formatters": "14.0.0"
-        }
-      },
-      "H.Pipes": {
-        "type": "Transitive",
-        "resolved": "14.0.0",
-        "contentHash": "ovADXe9EKluoYQNUTaZ3hqOQv6+YtQWe7+rMEkt79v16u8+CcPZKRXMw6QVohUBhgKLQHliR1WzMuCTsDjxCNQ==",
-        "dependencies": {
-          "H.Formatters.System.Text.Json": "14.0.0"
-        }
-      },
-      "Microsoft.CSharp": {
-        "type": "Transitive",
-        "resolved": "4.7.0",
-        "contentHash": "pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA=="
+      "Unscrambler.XIV": {
+        "type": "Direct",
+        "requested": "[7.40.2, )",
+        "resolved": "7.40.2",
+        "contentHash": "fUqy+vAB5sscbBhKETPSaeP4ieWTD7GhrRuzSlX/tmIhaOlB72KLQFvj65VonVYJSEbnlyYNIJXq7srRi1rA+Q=="
       },
       "Microsoft.Extensions.ObjectPool": {
         "type": "Transitive",
