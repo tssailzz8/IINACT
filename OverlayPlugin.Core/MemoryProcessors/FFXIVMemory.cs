@@ -54,7 +54,7 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
                 CloseProcessHandle();
             }
 
-            if (proc == null || proc.HasExited)
+            if (proc == null)
                 return;
 
             if (proc.ProcessName == "ffxiv")
@@ -97,12 +97,6 @@ namespace RainbowMage.OverlayPlugin.MemoryProcessors
 
         public bool IsValid()
         {
-            if (process != null && process.HasExited)
-            {
-                CloseProcessHandle();
-                OnProcessChange?.Invoke(this, null);
-            }
-
             if (processHandle != IntPtr.Zero)
                 return true;
 
